@@ -16,7 +16,7 @@ export async function POST(req) {
       [trimmedEmail, trimmedUsername, trimmedPassword].some((field) => !field)
     ) {
       return NextResponse.json(
-        {
+        {  success:false,
           data: null,
           message: "All fields are required",
         },
@@ -28,7 +28,7 @@ export async function POST(req) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
       return NextResponse.json(
-        {
+        {   success:false,
             data: null,
             message: "Please provide a valid email address",
           },
@@ -39,7 +39,7 @@ export async function POST(req) {
     // Password strength validation
     if (trimmedPassword.length < 8) {
       return NextResponse.json(
-        {
+        {   success:false,
             data: null,
             message: "Password must be at least 8 characters long",
           },
@@ -55,7 +55,7 @@ export async function POST(req) {
 
     if (existingUser) {
       return NextResponse.json(
-        {
+        {   success:false,
             data: null,
             message: "User with same email or username already exists",
           },
@@ -72,7 +72,7 @@ export async function POST(req) {
 
     if (!user) {
       return NextResponse.json(
-        {
+        {   success:false,
             data: null,
             message: "Failed to create new user",
           },
@@ -80,13 +80,14 @@ export async function POST(req) {
       );
     }
     return NextResponse.json(
-       { data: user._id ,message:"User created successfully"},
+       {success:true, data: user._id ,message:"User created successfully"},
       { status: 201 }
     );
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      new ApiResponse(500, null, "Internal server error"),
+
+      {success:false, data:null, message:error.message||"Internal server error"},
       { status: 500 }
     );
   }

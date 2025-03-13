@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -14,7 +15,8 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "WorkTrack - Collaborative Task Management",
-  description: "WorkTrack is a powerful project management tool designed to help teams and individuals streamline task organization, enhance collaboration, and boost productivity.",
+  description:
+    "WorkTrack is a powerful project management tool designed to help teams and individuals streamline task organization, enhance collaboration, and boost productivity.",
 };
 
 export default function RootLayout({ children }) {
@@ -23,6 +25,8 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {" "}
+        <Toaster position="bottom-right" reverseOrder={false} />
         {children}
       </body>
     </html>
