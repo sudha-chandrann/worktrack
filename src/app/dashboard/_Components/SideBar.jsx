@@ -30,7 +30,7 @@ const DashboardRoutes = [
 
 function Sidebar() {
   return (
-    <div className="w-64 h-full overflow-y-auto bg-gray-900 text-gray-300 border-r border-gray-800">
+    <div className="w-full h-full overflow-y-auto bg-gray-900 text-gray-300 border-r border-gray-800">
       <div className="flex items-center gap-3 px-6 py-8">
         <Image src={'/logo.svg'} alt="logo" height={40} width={40} className="brightness-200" />
         <span className="text-xl font-semibold text-white tracking-wide">WorkTrack</span>
