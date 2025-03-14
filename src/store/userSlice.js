@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   status: false,
   username: null,
+  fullName:null,
   email: null,
   projects: [],
   inbox:'',
@@ -17,13 +18,15 @@ const UserSlice = createSlice({
       state.status = true;
       state._id=action.payload._id;
       state.username = action.payload.username;
+      state.fullName=action.payload.fullName;
       state.email = action.payload.email;
       state.projects = action.payload.projects;
       state.inbox=action.payload.inbox;
     },
-    logout: (state) => {
+    authlogout: (state) => {
       state.status = false;
       state.username = null;
+      state.fullName=null;
       state.email = null;
       state.projects = [];
       state.teams=[];
@@ -42,7 +45,7 @@ const UserSlice = createSlice({
   },
 });
 
-export const { login, logout ,setProjects,addProject,removeProject} = UserSlice.actions;
+export const { login, authlogout ,setProjects,addProject,removeProject} = UserSlice.actions;
 export default UserSlice.reducer;
 
 

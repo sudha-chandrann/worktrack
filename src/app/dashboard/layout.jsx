@@ -16,8 +16,6 @@ export default function RootLayout({ children }) {
     try {
       setLoading(true);
       const response = await axios.get("/api/users/getcurrentuser");
-      console.log("The response is:", response);
-
       if (response.data.success) {
         // User is authenticated, set user data in Redux store
         dispatch(login(response.data.data));

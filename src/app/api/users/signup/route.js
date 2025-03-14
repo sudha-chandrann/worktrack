@@ -1,25 +1,25 @@
 // src/pages/api/users/register.js
 import dbConnect from "@/lib/dbconnect";
 import { NextResponse } from "next/server";
-import { Client } from "@/models/user.model";
+import { Project, User } from "@/models/user.model";
 
 export async function POST(req) {
   try {
     await dbConnect();
-    const { email, password, username } = await req.json();
+    const { email, password, username, fullName } = await req.json();
     const trimmedEmail = email?.trim();
     const trimmedUsername = username?.trim();
     const trimmedPassword = password?.trim();
+    const trimmedfullName = fullName?.trim();
 
     // Validate input fields
     if (
-      [trimmedEmail, trimmedUsername, trimmedPassword].some((field) => !field)
+      [trimmedEmail, trimmedUsername, trimmedPassword, trimmedfullName].some(
+        (field) => !field
+      )
     ) {
       return NextResponse.json(
-        {  success:false,
-          data: null,
-          message: "All fields are required",
-        },
+        { success: false, data: null, message: "All fields are required" },
         { status: 400 }
       );
     }
@@ -28,10 +28,11 @@ export async function POST(req) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
       return NextResponse.json(
-        {   success:false,
-            data: null,
-            message: "Please provide a valid email address",
-          },
+        {
+          success: false,
+          data: null,
+          message: "Please provide a valid email address",
+        },
         { status: 400 }
       );
     }
@@ -39,55 +40,78 @@ export async function POST(req) {
     // Password strength validation
     if (trimmedPassword.length < 8) {
       return NextResponse.json(
-        {   success:false,
-            data: null,
-            message: "Password must be at least 8 characters long",
-          },
+        {
+          success: false,
+          data: null,
+          message: "Password must be at least 8 characters long",
+        },
 
         { status: 400 }
       );
     }
 
     // Check for existing users
-    const existingUser = await Client.findOne({
+    const existingUser = await User.findOne({
       $or: [{ email: trimmedEmail }, { username: trimmedUsername }],
     });
 
     if (existingUser) {
       return NextResponse.json(
-        {   success:false,
-            data: null,
-            message: "User with same email or username already exists",
-          },
+        {
+          success: false,
+          data: null,
+          message: "User with same email or username already exists",
+        },
         { status: 409 }
       );
     }
 
     // Create user
-    const user = await Client.create({
+    const user = await User.create({
       email: trimmedEmail,
       username: trimmedUsername,
       password: trimmedPassword,
+      fullName: trimmedfullName,
     });
 
     if (!user) {
       return NextResponse.json(
-        {   success:false,
-            data: null,
-            message: "Failed to create new user",
-          },
+        { success: false, data: null, message: "Failed to create new user" },
         { status: 500 }
       );
     }
+    const inbox = await Project.create({
+      name: "Inbox",
+      description: "Your inbox",
+      createdBy: user._id,
+    });
+
+    const updateduser = await User.findByIdAndUpdate(
+      user._id,
+      {
+        inbox: inbox._id,
+      },
+      {
+        new: true,
+      }
+    );
+
     return NextResponse.json(
-       {success:true, data: user._id ,message:"User created successfully"},
+      {
+        success: true,
+        data: updateduser._id,
+        message: "User created successfully",
+      },
       { status: 201 }
     );
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-
-      {success:false, data:null, message:error.message||"Internal server error"},
+      {
+        success: false,
+        data: null,
+        message: error.message || "Internal server error",
+      },
       { status: 500 }
     );
   }

@@ -20,7 +20,8 @@ const Register = () => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    fullName:''
   });
   
   // Password visibility toggles
@@ -51,9 +52,9 @@ const Register = () => {
 
   // Validate form inputs
   const validateForm = () => {
-    const { username, email, password, confirmPassword } = formData;
+    const { username, email, password, confirmPassword ,fullName} = formData;
     
-    if (!username || !email || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword || !fullName) {
       toast.error("Please fill all the fields");
       return false;
     }
@@ -81,8 +82,8 @@ const Register = () => {
     setIsSubmitting(true);
     
     try {
-      const { username, email, password } = formData;
-      const response = await axios.post('/api/users/signup', { email, username, password });
+      const { username, email, password,fullName } = formData;
+      const response = await axios.post('/api/users/signup', { email, username, password ,fullName});
       if (response.data.success) {
         toast.success(response.data.message);
         router.push('/login');
@@ -124,6 +125,18 @@ const Register = () => {
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="space-y-1">
+              <label htmlFor="fullName" className="text-sm font-medium text-gray-300">fullName</label>
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                value={formData.fullName}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg bg-gray-900/80 border border-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-all duration-200"
+                placeholder="Enter your fullName"
+              />
+            </div>
             <div className="space-y-1">
               <label htmlFor="username" className="text-sm font-medium text-gray-300">Username</label>
               <input

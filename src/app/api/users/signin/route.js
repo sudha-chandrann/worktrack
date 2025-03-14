@@ -1,13 +1,13 @@
 // src/pages/api/users/register.js
 import dbConnect from "@/lib/dbconnect";
-import { Client } from "@/models/user.model";
+import {  User } from "@/models/user.model";
 import { NextResponse } from "next/server";
 
 //  Generate access and refresh tokens for a user
  
 const generateTokens = async (userId) => {
   try {
-    const user = await Client.findById(userId);
+    const user = await User.findById(userId);
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
     
@@ -46,7 +46,7 @@ export async function POST(req) {
     }
     
     // Find existing user
-    const existingUser = await Client.findOne({
+    const existingUser = await User.findOne({
       $or: [
         { email: email?.trim() }, 
         { username: username?.trim() }
