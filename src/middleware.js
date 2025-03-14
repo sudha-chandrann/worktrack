@@ -8,7 +8,7 @@ export function middleware(request) {
   const path = request.nextUrl.pathname;
   const publicPaths = ["/login", "/register", "/"];
   const isPublicPath = publicPaths.includes(path);
-  const authPaths = ["/dashboard", "/profile", "/settings"];
+  const authPaths = ["/dashboard", "/projects","/profile", "/settings"];
   const isAuthPath = authPaths.some(authPath => path.startsWith(authPath));
 
   // Get token from cookies manually (fallback for Edge Runtime issues)
@@ -36,5 +36,6 @@ export const config = {
     "/login",
     "/register",
     "/",
+    "/projects/:path*"
   ],
 };

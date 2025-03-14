@@ -16,11 +16,11 @@ function Page() {
   const [data,setdata]=useState(null);
   const router= useRouter();
   const [isSubmitting,setisisSubmitting]=useState(false);
+
   const getInboxtodos= async()=>{
     try{
       setisloading(true);
       const response=await axios.get('/api/users/getuserinbox');
-      console.log(" the data is ",response.data.data);
       setdata(response.data.data);
     }
     catch(error){
@@ -31,6 +31,7 @@ function Page() {
       setisloading(false);
     }
   }
+  
   useEffect(()=>{
     getInboxtodos()
   },[inboxid])
@@ -86,11 +87,28 @@ function Page() {
       'No Due Date'
     ];
 
-    const handleUpdateTodo=()=>{
-      const todos = getTodos();
+    const handleUpdateTodo=async(id,updateData)=>{
+     try{
+        const response= await axios.patch(`/api/projects/${inboxid}/todos/${id}`,updateData);
+        toast.success(response.data.message||"Todo is Updated Successfully");
+        router.refresh();
+      }
+      catch(error){
+        console.log(" the error in updating todo ",error);
+        toast.error(error.response?.data?.message||"Something went wrong")
+      }
     }
-    const handleDeleteTodo=()=>{
-      console.log('delete todo')
+
+    const handleDeleteTodo=async(id)=>{
+      try{
+        const response= await axios.delete(`/api/projects/${inboxid}/todos/${id}`);
+        toast.success(response.data.message||"Todo is deleted Successfully");
+        router.refresh();
+      }
+      catch(error){
+        console.log(" the error in updating todo ",error);
+        toast.error(error.response?.data?.message||"Something went wrong")
+      }
     }
 
   const handleCreateTodo=async(data)=>{
