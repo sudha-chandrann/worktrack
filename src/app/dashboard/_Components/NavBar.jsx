@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Menu, Search, Bell } from "lucide-react";
+import { Menu, Bell } from "lucide-react";
 import Sidebar from "./SideBar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Avatar from "./Avatar";
