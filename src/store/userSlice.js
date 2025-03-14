@@ -18,7 +18,7 @@ const UserSlice = createSlice({
       state._id=action.payload._id;
       state.username = action.payload.username;
       state.email = action.payload.email;
-    //   state.projects = action.payload.projects;
+      state.projects = action.payload.projects;
       state.inbox=action.payload.inbox;
     },
     logout: (state) => {
