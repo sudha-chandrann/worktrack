@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "@/store/userSlice";
+import { login } from "../../store/userSlice"
 import Sidebar from "./_Components/SideBar";
 import Navbar from "./_Components/NavBar";
 

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Inter } from 'next/font/google';
-import { cn } from '@/lib/utils';
+import { cn } from "../../../lib/utils";
 
 const inter = Inter({ subsets: ['latin'] });
 

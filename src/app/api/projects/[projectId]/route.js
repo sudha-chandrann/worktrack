@@ -1,6 +1,7 @@
-import dbConnect from "@/lib/dbconnect";
-import { Project, Todo } from "@/models/user.model";
-import { getDataFromToken } from "@/utils/getdatafromtoken";
+
+import dbConnect from "../../../../lib/dbconnect";
+import { Project, Todo } from "../../../../models/user.model"
+import { getDataFromToken } from "../../../../utils/getdatafromtoken"
 import { NextResponse } from "next/server";
 
 export async function POST(req, context) {

@@ -1,5 +1,5 @@
 // src/pages/api/users/logout.js
-import dbConnect from "@/lib/dbconnect";
+import dbConnect from "../../../../lib/dbconnect"
 import { NextResponse } from "next/server";
 
 // User logout endpoint

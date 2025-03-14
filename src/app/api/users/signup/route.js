@@ -1,7 +1,7 @@
 // src/pages/api/users/register.js
-import dbConnect from "@/lib/dbconnect";
+import dbConnect from "../../../../lib/dbconnect"
+import { User ,Project} from "../../../../models/user.model";
 import { NextResponse } from "next/server";
-import { Project, User } from "@/models/user.model";
 
 export async function POST(req) {
   try {

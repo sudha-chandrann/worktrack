@@ -1,6 +1,6 @@
 // src/pages/api/users/register.js
-import dbConnect from "@/lib/dbconnect";
-import {  User } from "@/models/user.model";
+import dbConnect from "../../../../lib/dbconnect"
+import { User } from "../../../../models/user.model";
 import { NextResponse } from "next/server";
 
 //  Generate access and refresh tokens for a user

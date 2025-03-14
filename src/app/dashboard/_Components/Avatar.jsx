@@ -1,12 +1,12 @@
 'use client'
 import React, { useState, useRef, useEffect } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from "../../../lib/utils"
 import { User, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
-import { authlogout } from '@/store/userSlice'
+import { authlogout } from "../../../store/userSlice"
 
 function Avatar({ name,  width = 10 }) {
   const [isOpen, setIsOpen] = useState(false)

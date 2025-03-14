@@ -3,8 +3,6 @@ import { CalendarIcon, TagIcon, XIcon } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import axios from 'axios';
-import toast from 'react-hot-toast';
 
 const NewTodoModal = ({ onClose, onSubmit, isSubmitting }) => {
   const [title, setTitle] = useState('');

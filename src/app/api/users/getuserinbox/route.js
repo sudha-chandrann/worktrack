@@ -1,9 +1,9 @@
 // src/pages/api/users/register.js
-import dbConnect from "@/lib/dbconnect";
+import dbConnect from "../../../../lib/dbconnect"
+import { User,Todo } from "../../../../models/user.model";
+import { getDataFromToken } from "../../../../utils/getdatafromtoken";
 import { NextResponse } from "next/server";
-import { Todo, User } from "@/models/user.model";
 import mongoose from "mongoose";
-import { getDataFromToken } from "@/utils/getdatafromtoken";
 
 export async function GET(req) {
   try {
