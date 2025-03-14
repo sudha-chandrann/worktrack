@@ -64,7 +64,7 @@ function Login() {
     
     try {
       const { username, email, password } = formData;
-      const response = await axios.post('/api/users/login', {
+      const response = await axios.post('/api/users/signin', {
         username, email, password
       });
       
