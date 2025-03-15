@@ -1,18 +1,16 @@
 "use client";
+import SubTaskDetailView from "../../../_components/SubTaskDetailView"
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import TodoDetailView from "../../_components/TodoDetailView";
-import AddSubtaskForm from "../../_components/AddSubtaskForm";
-import SubtaskList from "../../_components/SubtaskList";
+import toast from "react-hot-toast";
+
 
 function Page({ params }) {
-  const { ProjectId, todoId } = params;
-  const [tododata, settododata] = useState(null);
+  const { ProjectId, todoId ,subtaskId} = params;
+  const [subtaskdata, setsubtaskdata] = useState(null);
   const [isLoading, setisloading] = useState(false);
   const [error, seterror] = useState(null);
-  const [isAddingSubtask, setIsAddingSubtask] = useState(false);
-  const [isSubmitting, setisSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -20,27 +18,27 @@ function Page({ params }) {
       try {
         setisloading(true);
         const response = await axios.get(
-          `/api/projects/${ProjectId}/todos/${todoId}`
+          `/api/projects/${ProjectId}/todos/${todoId}/${subtaskId}`
         );
-        settododata(response.data.data);
-        console.log("The todo data is", response.data.data);
+        setsubtaskdata(response.data.data);
+        console.log("The subtask data is", response.data.data);
       } catch (error) {
-        console.error("Error fetching todo data:", error);
+        console.error("Error fetching subtask data:", error);
         seterror(error.response?.data?.message || "Something went wrong !");
       } finally {
         setisloading(false);
       }
     };
 
-    if (todoId && ProjectId) {
+    if (todoId && ProjectId && subtaskId) {
       fetchTodoData();
     }
-  }, [todoId, ProjectId]);
+  }, [todoId, ProjectId,subtaskId]);
 
   const handleTodoUpdate = async (updatedData) => {
     try {
       const response = await axios.patch(
-        `/api/projects/${ProjectId}/todos/${todoId}`,
+        `/api/projects/${ProjectId}/todos/${todoId}/${subtaskId}`,
         updatedData
       );
       toast.success(response.data.message || "Todo is Updated Successfully");
@@ -53,28 +51,16 @@ function Page({ params }) {
   const handleTodoDelete = async () => {
     try {
       const response = await axios.delete(
-        `/api/projects/${ProjectId}/todos/${todoId}`
+        `/api/projects/${ProjectId}/todos/${todoId}/${subtaskId}`
       );
       toast.success(response.data.message || "Todo is deleted Successfully");
-      router.refresh();
+      router.back();
     } catch (error) {
       console.log(" the error in updating todo ", error);
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
-  const handleSubtaskAdd = async (subtaskData) => {
-    try {
-      const response = await axios.post(
-        `/api/projects/${ProjectId}/todos/${todoId}`,
-        subtaskData
-      );
-      toast.success(response.data.message || "Subtask is added Successfully");
-    } catch (err) {
-      console.error("Error adding subtask:", err);
-      seterror(err.response?.data?.message || "Something went wrong!");
-    }
-  };
 
   if (isLoading) {
     return (
@@ -100,7 +86,7 @@ function Page({ params }) {
       </div>
     );
   }
-  if (!tododata) {
+  if (!subtaskdata) {
     return (
       <div className="bg-gray-900 flex items-center justify-center h-screen">
         <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -129,43 +115,15 @@ function Page({ params }) {
           onClick={() => router.back()}
           className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
         >
-          <span>←</span> Back to Project
+          <span>←</span> Back to Todo
         </button>
       </div>
-      <TodoDetailView
-        todo={tododata}
+      <SubTaskDetailView
+        subtask={subtaskdata}
         onUpdate={handleTodoUpdate}
         onDelete={handleTodoDelete}
       />
-      <div className="mt-8 bg-gray-800 rounded-lg shadow-md p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-white">Subtasks</h3>
-          <button
-            onClick={() => setIsAddingSubtask(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Add Subtask
-          </button>
-        </div>
-        {isAddingSubtask && (
-          <div className=" w-full h-screen top-0 left-0 fixed bg-gray-400/10 flex items-center justify-center">
-            <div className="mb-6 p-4 border border-gray-200 rounded-lg">
-              <AddSubtaskForm
-                onSubmit={handleSubtaskAdd}
-                onCancel={() => setIsAddingSubtask(false)}
-                isSubmitting={isSubmitting}
-                todoId={todoId}
-              />
-            </div>
-          </div>
-        )}
-
-        <SubtaskList
-          subtasks={tododata.subtasks || []}
-          projectId={ProjectId}
-          todoId={todoId}
-        />
-      </div>
+ 
     </div>
     </div>
 

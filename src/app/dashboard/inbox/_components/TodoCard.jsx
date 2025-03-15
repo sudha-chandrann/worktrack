@@ -12,8 +12,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "../../../../components/ui/dropdown-menu"
+import { DropdownMenuLabel, DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "../../../../components/ui/dropdown-menu"
 import AlertBox from "../../../_components/AlertBox";
 
 const TodoCard = ({ todo, onUpdate, onDelete }) => {

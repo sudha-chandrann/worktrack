@@ -1,45 +1,44 @@
-// components/status/StatusBadge.jsx
 import React from "react";
+import { CheckCircle, Clock, AlertCircle, XCircle } from "lucide-react";
 
 const StatusBadge = ({ status }) => {
-  const getStatusIcon = (status) => {
+  const getStatusConfig = (status) => {
     switch (status) {
       case "to-do":
-        return "📋";
+        return {
+          icon: <AlertCircle className="w-4 h-4 mr-1.5" />,
+          className: "bg-gray-700 text-gray-200 border-gray-600"
+        };
       case "in-progress":
-        return "⏳";
+        return {
+          icon: <Clock className="w-4 h-4 mr-1.5" />,
+          className: "bg-blue-900/40 text-blue-200 border-blue-700/50"
+        };
       case "completed":
-        return "✅";
+        return {
+          icon: <CheckCircle className="w-4 h-4 mr-1.5" />,
+          className: "bg-green-900/40 text-green-200 border-green-700/50"
+        };
       case "blocked":
-        return "🚫";
+        return {
+          icon: <XCircle className="w-4 h-4 mr-1.5" />,
+          className: "bg-red-900/40 text-red-200 border-red-700/50"
+        };
       default:
-        return "📋";
+        return {
+          icon: <AlertCircle className="w-4 h-4 mr-1.5" />,
+          className: "bg-gray-700 text-gray-200 border-gray-600"
+        };
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "to-do":
-        return "bg-gray-700 text-gray-200";
-      case "in-progress":
-        return "bg-blue-700 text-blue-200";
-      case "completed":
-        return "bg-green-700 text-green-200";
-      case "blocked":
-        return "bg-red-700 text-red-200";
-      default:
-        return "bg-gray-700 text-gray-200";
-    }
-  };
+  const { icon, className } = getStatusConfig(status);
 
   return (
-    <span
-      className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 ${getStatusColor(
-        status
-      )}`}
-    >
-      {getStatusIcon(status)} {status}
-    </span>
+    <div className={`px-3 py-1.5 rounded-md text-sm flex items-center border ${className}`}>
+      {icon}
+      <span className="capitalize">{status}</span>
+    </div>
   );
 };
 
