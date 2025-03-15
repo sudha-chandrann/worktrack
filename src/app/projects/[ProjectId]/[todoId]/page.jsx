@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import TodoDetailView from "../../_components/TodoDetailView";
 import AddSubtaskForm from "../../_components/AddSubtaskForm";
 import SubtaskList from "../../_components/SubtaskList";
+import toast from "react-hot-toast";
 
 function Page({ params }) {
   const { ProjectId, todoId } = params;
@@ -122,8 +123,8 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-700 h-screen">
-          <div className="max-w-5xl mx-auto p-6 bg-gray-900 h-screen">
+    <div className="bg-gray-700 ">
+          <div className="max-w-5xl mx-auto p-6 bg-gray-900 min-h-screen">
       <div className="mb-4">
         <button
           onClick={() => router.back()}
