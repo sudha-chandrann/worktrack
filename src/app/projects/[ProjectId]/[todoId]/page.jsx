@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import TodoDetailView from "../../_components/TodoDetailView";
 import AddSubtaskForm from "../../_components/AddSubtaskForm";
+import SubtaskList from "../../_components/SubtaskList";
 
 function Page({ params }) {
   const { ProjectId, todoId } = params;
@@ -11,7 +12,7 @@ function Page({ params }) {
   const [isLoading, setisloading] = useState(false);
   const [error, seterror] = useState(null);
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
-  const [isSubmitting,setisSubmitting]=useState(false);
+  const [isSubmitting, setisSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -64,11 +65,14 @@ function Page({ params }) {
 
   const handleSubtaskAdd = async (subtaskData) => {
     try {
-      const response= await axios.post(`/api/projects/${ProjectId}/todos/${todoId}`,subtaskData);
+      const response = await axios.post(
+        `/api/projects/${ProjectId}/todos/${todoId}`,
+        subtaskData
+      );
       toast.success(response.data.message || "Subtask is added Successfully");
     } catch (err) {
       console.error("Error adding subtask:", err);
-      seterror(err.response?.data?.message||"Something went wrong!");
+      seterror(err.response?.data?.message || "Something went wrong!");
     }
   };
 
@@ -154,6 +158,12 @@ function Page({ params }) {
             </div>
           </div>
         )}
+
+        <SubtaskList
+          subtasks={tododata.subtasks || []}
+          projectId={ProjectId}
+          todoId={todoId}
+        />
       </div>
     </div>
   );
