@@ -1,13 +1,131 @@
-import React from 'react'
+"use client";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import TodoDetailView from "../../_components/TodoDetailView";
 
-function page({params}) {
-  const {ProjectId,todoId}=params;
-  console.log("the idis ",ProjectId,todoId)
+function Page({ params }) {
+  const { ProjectId, todoId } = params;
+  const [tododata, settododata] = useState(null);
+  const [isLoading, setisloading] = useState(false);
+  const [error, seterror] = useState(null);
+  const router=useRouter();
+  useEffect(() => {
+    const fetchTodoData = async () => {
+      try {
+        setisloading(true);
+        const response = await axios.get(
+          `/api/projects/${ProjectId}/todos/${todoId}`
+        );
+        settododata(response.data.data)
+        console.log("The todo data is", response.data.data);
+      } catch (error) {
+        console.error("Error fetching todo data:", error);
+      } finally {
+        setisloading(false);
+      }
+    };
+
+    if (todoId && ProjectId) {
+      fetchTodoData();
+    }
+  }, [todoId, ProjectId]);
+
+
+  const handleTodoUpdate = async (updatedData) => {
+    try{
+      const response= await axios.patch(`/api/projects/${ProjectId}/todos/${todoId}`,updatedData);
+      toast.success(response.data.message||"Todo is Updated Successfully");
+      router.refresh();
+    }
+    catch(error){
+      console.log(" the error in updating todo ",error);
+      toast.error(error.response?.data?.message||"Something went wrong")
+    }
+  };
+  const handleTodoDelete = async () => {
+    try{
+      const response= await axios.delete(`/api/projects/${ProjectId}/todos/${todoId}`);
+      toast.success(response.data.message||"Todo is deleted Successfully");
+      router.refresh();
+    }
+    catch(error){
+      console.log(" the error in updating todo ",error);
+      toast.error(error.response?.data?.message||"Something went wrong")
+    }
+  };
+  
+
+
+  if (isLoading) {
+    return (
+      <div className="bg-gray-900 h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-900">
+        <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
+          <h2 className="text-red-600 text-xl font-semibold">Error</h2>
+          <p className="text-red-700">{error}</p>
+          <button
+            onClick={() => router.push(`/dashboard`)}
+            className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
+          >
+            Back to Project
+          </button>
+        </div>
+      </div>
+    );
+  }
+  if (!tododata) {
+    return (
+      <div className="bg-gray-900 flex items-center justify-center h-screen">
+        <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h2 className="text-yellow-600 text-xl font-semibold">
+            Task Not Found
+          </h2>
+          <p className="text-yellow-700">
+            The requested task could not be found.
+          </p>
+          <button
+            onClick={() => router.push(`/dashboard`)}
+            className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
+          >
+            Back to Project
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="max-w-5xl mx-auto p-6 bg-gray-900 h-screen">
+      <div className="mb-4">
+        <button
+          onClick={() => router.back()}
+          className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+        >
+          <span>←</span> Back to Project
+        </button>
+      </div>
+      <TodoDetailView 
+        todo={tododata} 
+        onUpdate={handleTodoUpdate} 
+        onDelete={handleTodoDelete}
+      />
       
-    </div>
-  )
+  </div>
+);
 }
 
-export default page
+export default Page;
+
+const Spinner = () => (
+  <div className="flex justify-center items-center">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+);
