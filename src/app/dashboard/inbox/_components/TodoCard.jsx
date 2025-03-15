@@ -12,9 +12,11 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "../../../../components/ui/dropdown-menu"
+import AlertBox from "../../../_components/AlertBox";
 
 const TodoCard = ({ todo, onUpdate, onDelete }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [editedDescription, setEditedDescription] = useState(
@@ -27,6 +29,11 @@ const TodoCard = ({ todo, onUpdate, onDelete }) => {
     medium: "border-yellow-500",
     low: "border-blue-500",
   };
+  const prioritytextColors = {
+    high: "text-red-500",
+    medium: "text-yellow-500",
+    low: "text-blue-500",
+  };
 
   const statusColors = {
     "to-do": "bg-gray-500",
@@ -37,12 +44,12 @@ const TodoCard = ({ todo, onUpdate, onDelete }) => {
 
   const handleStatusChange = (newStatus) => {
     onUpdate(todo._id, { status: newStatus });
-    setIsMenuOpen(false);
+   
   };
 
   const handlePriorityChange = (newPriority) => {
     onUpdate(todo._id, { priority: newPriority });
-    setIsMenuOpen(false);
+    
   };
 
   const handleSaveEdit = () => {
@@ -143,7 +150,7 @@ const TodoCard = ({ todo, onUpdate, onDelete }) => {
                 )}
 
                 <div className="flex items-center gap-1">
-                  <FlagIcon className="w-4 h-4" />
+                  <FlagIcon className={`w-4 h-4 ${prioritytextColors[todo.priority]}`} />
                   <span className="capitalize">{todo.priority}</span>
                 </div>
 
@@ -167,36 +174,30 @@ const TodoCard = ({ todo, onUpdate, onDelete }) => {
             </div>
 
             <div className="relative">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-1 rounded-full hover:bg-gray-700"
-              >
-                <CircleDotDashedIcon className="w-5 h-5 text-gray-300" />
-              </button>
 
-              {isMenuOpen && (
-                <div className="absolute right-0 top-8 bg-gray-700 rounded-lg shadow-lg z-10 w-48 py-1 text-sm">
-                  <button
+              <DropdownMenu>
+                <DropdownMenuTrigger className=" rounded-full hover:bg-gray-700 ">
+                  <CircleDotDashedIcon className="w-5 h-5 text-gray-300 " />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-gray-800 border-gray-800 text-white ">
+                  <DropdownMenuLabel
                     onClick={() => {
                       setIsEditing(true);
-                      setIsMenuOpen(false);
                     }}
-                    className="w-full px-4 py-2 text-left text-white hover:bg-gray-600 flex items-center gap-2"
+                    className="flex items-center justify-start gap-3 p-3 hover:bg-gray-900 cursor-pointer"
                   >
-                    <PencilIcon className="w-4 h-4" />
+                    <PencilIcon className="w-4 h-4 " />
                     Edit
-                  </button>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
 
-                  <div className="px-4 py-1 text-gray-300 text-xs border-t border-gray-600 mt-1 pt-1">
-                    Status
-                  </div>
-
+                  <DropdownMenuLabel className="p-1">Status</DropdownMenuLabel>
                   {["to-do", "in-progress", "completed", "blocked"].map(
                     (status) => (
-                      <button
+                      <DropdownMenuLabel
                         key={status}
                         onClick={() => handleStatusChange(status)}
-                        className="w-full px-4 py-2 text-left text-white hover:bg-gray-600 flex items-center gap-2"
+                        className="flex items-center gap-2 p-2  hover:bg-gray-900 cursor-pointer"
                       >
                         <div
                           className={`w-2 h-2 rounded-full ${statusColors[status]}`}
@@ -204,19 +205,17 @@ const TodoCard = ({ todo, onUpdate, onDelete }) => {
                         <span className="capitalize">
                           {status.replace("-", " ")}
                         </span>
-                      </button>
+                      </DropdownMenuLabel>
                     )
                   )}
+                  <DropdownMenuSeparator />
 
-                  <div className="px-4 py-1 text-gray-300 text-xs border-t border-gray-600 mt-1 pt-1">
-                    Priority
-                  </div>
-
+                  <DropdownMenuLabel className="p-1">Priority</DropdownMenuLabel>
                   {["high", "medium", "low"].map((priority) => (
-                    <button
+                    <DropdownMenuLabel
                       key={priority}
                       onClick={() => handlePriorityChange(priority)}
-                      className="w-full px-4 py-2 text-left text-white hover:bg-gray-600 flex items-center gap-2"
+                      className="flex items-center gap-2 p-2 hover:bg-gray-900 cursor-pointer"
                     >
                       <div
                         className={`w-2 h-2 rounded-full ${
@@ -228,30 +227,35 @@ const TodoCard = ({ todo, onUpdate, onDelete }) => {
                         }`}
                       ></div>
                       <span className="capitalize">{priority}</span>
-                    </button>
+                    </DropdownMenuLabel>
                   ))}
+                  <DropdownMenuSeparator />
 
-                  <button
+                  <DropdownMenuLabel
                     onClick={() => {
-                      onDelete(todo._id);
-                      setIsMenuOpen(false);
+                      router.push(
+                        `/projects/${todo.project}/${todo._id}/`
+                      );
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-600 flex items-center gap-2 text-red-400 border-t border-gray-600 mt-1"
+                    className="flex items-center justify-start gap-3 p-2 hover:bg-gray-900 cursor-pointer"
                   >
-                    <TrashIcon className="w-4 h-4" />
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => {
-                      router.push(`/projects/${todo.project}/${todo._id}`);
-                    }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-600 flex items-center gap-2 text-purple-400 border-t border-gray-600 mt-1"
-                  >
+                    {" "}
                     <ArrowRight className="w-5 h-5" />
                     Go to
-                  </button>
-                </div>
-              )}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel
+                    className="flex items-center justify-start gap-3 p-2  hover:bg-gray-900 cursor-pointer"
+                  >
+                    <AlertBox onConfirm={()=>{onDelete(todo._id)}}>
+                        <div className=" flex items-center gap-2">
+                        <TrashIcon className="w-4 h-4" />
+                        Delete
+                        </div>
+                    </AlertBox>
+                  </DropdownMenuLabel>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

@@ -1,5 +1,7 @@
 import React from 'react';
 import SubtaskItem from './SubtaskItem';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const SubtaskList = ({ subtasks,projectId,todoId }) => {
   if (!subtasks || subtasks.length === 0) {
@@ -11,45 +13,25 @@ const SubtaskList = ({ subtasks,projectId,todoId }) => {
   }
   const handleSubtaskUpdate = async (subtaskId, updatedData) => {
     try {
-      const response = await fetch(`/api/subtasks/${subtaskId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update subtask');
+      const response = await axios.patch(`/api/projects/${projectId}/todos/${todoId}/${subtaskId}`,updatedData);
+      if(response.data.success){
+        toast.success(response.data.message||" Subtask is updated successfully");
       }
-      
-      // Refresh todo data to include updated subtask
-      const refreshResponse = await fetch(`/api/todos/${todoId}`);
-      const refreshData = await refreshResponse.json();
-      setTodo(refreshData.todo);
     } catch (err) {
       console.error('Error updating subtask:', err);
-      setError(err.message);
+      toast.error(err.response?.data?.message||"Something went wrong")
     }
   };
   
   const handleSubtaskDelete = async (subtaskId) => {
     try {
-      const response = await fetch(`/api/subtasks/${subtaskId}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete subtask');
+      const response = await axios.delete(`/api/projects/${projectId}/todos/${todoId}/${subtaskId}`);
+      if(response.data.success){
+        toast.success(response.data.message||" Subtask is updated successfully");
       }
-      
-      // Refresh todo data
-      const refreshResponse = await fetch(`/api/todos/${todoId}`);
-      const refreshData = await refreshResponse.json();
-      setTodo(refreshData.todo);
     } catch (err) {
       console.error('Error deleting subtask:', err);
-      setError(err.message);
+      toast.error(err.response?.data?.message||"Something went wrong")
     }
   };
   
@@ -60,7 +42,7 @@ const SubtaskList = ({ subtasks,projectId,todoId }) => {
           key={subtask._id} 
           subtask={subtask} 
           onUpdate={handleSubtaskUpdate}
-          onDelete={handleSubtaskUpdate}
+          onDelete={handleSubtaskDelete}
           projectId={projectId}
           todoId={todoId}
         />

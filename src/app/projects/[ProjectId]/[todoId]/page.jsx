@@ -122,7 +122,8 @@ function Page({ params }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-gray-900 h-screen">
+    <div className="bg-gray-700 h-screen">
+          <div className="max-w-5xl mx-auto p-6 bg-gray-900 h-screen">
       <div className="mb-4">
         <button
           onClick={() => router.back()}
@@ -166,6 +167,8 @@ function Page({ params }) {
         />
       </div>
     </div>
+    </div>
+
   );
 }
 

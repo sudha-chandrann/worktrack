@@ -9,6 +9,7 @@ import TodoInformationSection from "./TodoInformationSection";
 import TagsList from "./TagsList";
 import TodoEditForm from "./TodoEditForm";
 import PastDueAlert from "./PastDueAlert";
+import AlertBox from "../../_components/AlertBox"
 
 
 const TodoDetailView = ({ todo, onUpdate, onDelete }) => {
@@ -55,12 +56,15 @@ const TodoDetailView = ({ todo, onUpdate, onDelete }) => {
               >
                 ✏️ Edit
               </button>
+              <AlertBox onConfirm={onDelete}>
               <button
                 onClick={onDelete}
                 className="px-3 py-1 bg-red-900 hover:bg-red-800 text-red-200 rounded-md text-sm"
               >
                 🗑️ Delete
               </button>
+              </AlertBox>
+
             </div>
           </div>
 
