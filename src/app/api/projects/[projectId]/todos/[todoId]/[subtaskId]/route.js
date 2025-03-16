@@ -1,6 +1,6 @@
 
 import dbConnect from "../../../../../../../lib/dbconnect";
-import { Subtask, Todo, User } from "../../../../../../../models/user.model";
+import { Comment, Subtask, Todo, User } from "../../../../../../../models/user.model";
 import { getDataFromToken } from "../../../../../../../utils/getdatafromtoken";
 import { NextResponse } from "next/server";
 
@@ -84,32 +84,40 @@ export async function PATCH(req, context) {
     );
   }
 }
-
 export async function DELETE(req, context) {
   await dbConnect();
 
   try {
     const userId = getDataFromToken(req);
     const { params } = context;
-    const {  todoId,subtaskId } = params;
+    const { todoId, subtaskId } = params;
 
     if (!subtaskId || !todoId) {
       return NextResponse.json(
-        { success: false, message: "subtask ID and Todo ID are required" },
+        { success: false, message: "Subtask ID and Todo ID are required" },
         { status: 400 }
       );
     }
 
-    // Fetch project along with todos
+    // Fetch the Todo and check if the subtask exists
     const todo = await Todo.findById(todoId).populate("subtasks").lean();
     if (!todo) {
       return NextResponse.json(
-        { success: false, message: "todo not found" },
+        { success: false, message: "Todo not found" },
         { status: 404 }
       );
     }
 
-    // Fetch user and validate ownership
+    // Fetch the subtask
+    const subtask = await Subtask.findById(subtaskId);
+    if (!subtask) {
+      return NextResponse.json(
+        { success: false, message: "Subtask not found" },
+        { status: 404 }
+      );
+    }
+
+    // Validate ownership
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json(
@@ -118,32 +126,32 @@ export async function DELETE(req, context) {
       );
     }
 
-    const subtask = await Subtask.findById(subtaskId);
-    if (!subtask) {
-      return NextResponse.json(
-        { success: false, message: "subtask not found" },
-        { status: 404 }
-      );
-    }
-
-    // Check if user has access to delete this todo
     if (!todo.subtasks.some((t) => t._id.toString() === subtaskId)) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Subtask does not belong to the specified Todo",
-        },
+        { success: false, message: "Subtask does not belong to the specified Todo" },
         { status: 403 }
       );
     }
 
-    // Remove the todo from the project and delete it
+    // Check if the subtask is assigned to someone
+    if (subtask.assignedTo && subtask.assignedTo.toString() !== userId) {
+      return NextResponse.json(
+        { success: false, message: "You are not authorized to delete this subtask" },
+        { status: 403 }
+      );
+    }
+
+    // Remove the subtask reference from Todo
     await Todo.findByIdAndUpdate(todoId, { $pull: { subtasks: subtaskId } });
 
+    // Delete all comments related to the subtask
+    await Comment.deleteMany({ _id: { $in: subtask.comments } });
+
+    // Delete the subtask itself
     await Subtask.findByIdAndDelete(subtaskId);
 
     return NextResponse.json(
-      { success: true, message: "subtask deleted successfully" },
+      { success: true, message: "Subtask and related data deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
@@ -154,7 +162,6 @@ export async function DELETE(req, context) {
     );
   }
 }
-
 export async function GET(req, context) {
     await dbConnect();
   

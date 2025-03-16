@@ -1,5 +1,5 @@
 import dbConnect from "../../../../../../lib/dbconnect";
-import { Project, Subtask, Todo, User } from "../../../../../../models/user.model";
+import { Comment, Project, Subtask, Todo, User } from "../../../../../../models/user.model";
 import { getDataFromToken } from "../../../../../../utils/getdatafromtoken";
 import { NextResponse } from "next/server";
 
@@ -99,7 +99,7 @@ export async function DELETE(req, context) {
       );
     }
 
-    // Fetch project along with todos
+    // Fetch project with todos
     const project = await Project.findById(projectId).populate("todos").lean();
     if (!project) {
       return NextResponse.json(
@@ -108,15 +108,7 @@ export async function DELETE(req, context) {
       );
     }
 
-    // Fetch user and validate ownership
-    const user = await User.findById(userId);
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: "User not found" },
-        { status: 404 }
-      );
-    }
-
+    // Fetch todo and validate ownership
     const todo = await Todo.findById(todoId);
     if (!todo) {
       return NextResponse.json(
@@ -125,28 +117,40 @@ export async function DELETE(req, context) {
       );
     }
 
-    // Check if user has access to delete this todo
-    if (!project.todos.some((t) => t._id.toString() === todoId)) {
+    // Check if user has permission (only the assigned user can delete)
+    if (todo.assignedTo && todo.assignedTo.toString() !== userId) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Todo does not belong to the specified project",
-        },
+        { success: false, message: "You are not authorized to delete this todo" },
         { status: 403 }
       );
     }
 
-    // Remove the todo from the project and delete it
+    // Check if todo belongs to the project
+    if (!project.todos.some((t) => t._id.toString() === todoId)) {
+      return NextResponse.json(
+        { success: false, message: "Todo does not belong to the specified project" },
+        { status: 403 }
+      );
+    }
+
+    // Remove todo from the project
     await Project.findByIdAndUpdate(projectId, { $pull: { todos: todoId } });
 
+    // Delete related subtasks
+    await Subtask.deleteMany({ _id: { $in: todo.subtasks } });
+
+    // Delete related comments
+    await Comment.deleteMany({ _id: { $in: todo.comments } });
+
+    // Delete the todo itself
     await Todo.findByIdAndDelete(todoId);
 
     return NextResponse.json(
-      { success: true, message: "Todo deleted successfully" },
+      { success: true, message: "Todo and related data deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting inbox todo:", error);
+    console.error("Error deleting todo:", error);
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 }
