@@ -35,7 +35,7 @@ function Page({ params }) {
     }
   }, [todoId, ProjectId,subtaskId]);
 
-  const handleTodoUpdate = async (updatedData) => {
+  const handleSubtaskUpdate = async (updatedData) => {
     try {
       const response = await axios.patch(
         `/api/projects/${ProjectId}/todos/${todoId}/${subtaskId}`,
@@ -48,7 +48,7 @@ function Page({ params }) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
-  const handleTodoDelete = async () => {
+  const handleSubtaskDelete = async () => {
     try {
       const response = await axios.delete(
         `/api/projects/${ProjectId}/todos/${todoId}/${subtaskId}`
@@ -120,8 +120,8 @@ function Page({ params }) {
       </div>
       <SubTaskDetailView
         subtask={subtaskdata}
-        onUpdate={handleTodoUpdate}
-        onDelete={handleTodoDelete}
+        onUpdate={handleSubtaskUpdate}
+        onDelete={handleSubtaskDelete}
       />
  
     </div>

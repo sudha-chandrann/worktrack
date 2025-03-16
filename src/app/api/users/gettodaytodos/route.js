@@ -1,6 +1,6 @@
 // src/pages/api/users/register.js
 import dbConnect from "../../../../lib/dbconnect"
-import { Todo } from "../../../../models/user.model";
+import { Subtask, Todo } from "../../../../models/user.model";
 import { getDataFromToken } from "../../../../utils/getdatafromtoken";
 import { NextResponse } from "next/server";
 
@@ -34,8 +34,19 @@ export async function GET(req) {
       .populate("assignedTo", "username fullName")
       .populate("assignedBy", "username fullName")
       ;
+
+      const subtasks = await Subtask.find({
+        assignedTo: id,
+        dueDate: { $gte: startOfDay, $lte: endOfDay }
+      })
+      .populate("parentTask", "title  status priority dueDate  _id project ")
+      .populate("assignedTo", "username fullName")
+      ;
       
-      return NextResponse.json({ success: true, data: todos, message: "Today's todos found" }, { status: 200 });
+      return NextResponse.json({ success: true, data: {
+        todos:todos,
+        subtasks:subtasks
+      }, message: "Today's todos found" }, { status: 200 });
     } catch (error) {
       console.error("Error in GET /api/users/gettodaytodos:", error);
       return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });

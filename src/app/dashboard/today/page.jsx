@@ -19,9 +19,11 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import TodoCard from "./_components/TodoItem";
+import SubTaskCard from "./_components/SubtodoItem";
 
 function TodayTasksPage() {
   const [todosData, setTodosData] = useState([]);
+  const [subtasksData, setsubtasks] = useState([]);
   const [filteredTodos, setFilteredTodos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -78,12 +80,41 @@ function TodayTasksPage() {
     }
   };
 
+    const handleSubtaskUpdate = async (ProjectId,todoId,subtaskId,updatedData) => {
+      try {
+        const response = await axios.patch(
+          `/api/projects/${ProjectId}/todos/${todoId}/${subtaskId}`,
+          updatedData
+        );
+        toast.success(response.data.message || "Todo is Updated Successfully");
+        fetchTodayTodos();
+      } catch (error) {
+        console.log(" the error in updating todo ", error);
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
+    };
+    const handleSubtaskDelete = async (ProjectId,todoId,subtaskId) => {
+      try {
+        const response = await axios.delete(
+          `/api/projects/${ProjectId}/todos/${todoId}/${subtaskId}`
+        );
+        toast.success(response.data.message || "Todo is deleted Successfully");
+        fetchTodayTodos();
+      } catch (error) {
+        console.log(" the error in updating todo ", error);
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
+    };
+
   // Fetch today's todos
   const fetchTodayTodos = async () => {
     try {
       setIsLoading(true);
       const response = await axios.get("/api/users/gettodaytodos");
-      const todos = response.data.data || [];
+      console.log(" the  today respose is ",response.data.data)
+      const todos = response.data.data.todos || [];
+      const subtasks = response.data.data.subtasks || [];
+      setsubtasks(subtasks)
       setTodosData(todos);
       applyFiltersAndSort(todos, activeFilter, sortOrder);
     } catch (err) {
@@ -172,32 +203,79 @@ function TodayTasksPage() {
   }
 
   // Empty state
-  if (!todosData.length) {
+  if (!todosData.length && !subtasksData.length) {
     return (
       <div className="flex h-full flex-col items-center justify-center p-8 bg-gray-900">
         <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 max-w-md w-full text-center">
           <Calendar className="h-16 w-16 text-gray-400 mx-auto" />
           <h3 className="mt-4 text-xl font-semibold text-white">
-            No tasks for today
+            No tasks and Subtasks for today
           </h3>
           <p className="mt-2 text-gray-400">
             You don&apos;t have any tasks due today. Enjoy your day or add a new task to get started.
           </p>
           <button
-            onClick={() => setIsNewTodoModalOpen(true)}
-            className="mt-6 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors mx-auto"
-          >
-            <PlusIcon className="h-5 w-5" />
-            Add Task
+              onClick={() => setIsNewTodoModalOpen(true)}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors mx-auto mt-3"
+            >
+              <PlusIcon className="h-5 w-5" />
+              Add Task
           </button>
         </div>
+        {isNewTodoModalOpen && (
+        <NewTodoModal
+          onClose={() => setIsNewTodoModalOpen(false)}
+          onSubmit={handleCreateTodo}
+          isSubmitting={isSubmitting}
+        />
+      )}
       </div>
     );
   }
 
+  if (!todosData.length && subtasksData.length) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center p-8 bg-gray-900">
+        <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 max-w-md w-full text-center">
+          <Calendar className="h-16 w-16 text-gray-400 mx-auto" />
+          <h3 className="mt-4 text-xl font-semibold text-white">
+            No tasks and Subtasks for today
+          </h3>
+          <p className="mt-2 text-gray-400">
+            You don&apos;t have any tasks due today. Enjoy your day or add a new task to get started.
+          </p>
+          <button
+              onClick={() => setIsNewTodoModalOpen(true)}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors mx-auto mt-3"
+            >
+              <PlusIcon className="h-5 w-5" />
+              Add Task
+          </button>
+        </div>
+
+        <div className="space-y-3 px-4 w-full max-w-5xl mx-auto py-4">
+          <div className="w-full"> Subtasks</div>
+        { subtasksData.map((subtask)=>(
+            <SubTaskCard key={subtask._id} subtask={subtask} onDelete={handleSubtaskDelete} onUpdate={handleSubtaskUpdate}/>
+          ))
+        }
+      </div>
+
+        {isNewTodoModalOpen && (
+        <NewTodoModal
+          onClose={() => setIsNewTodoModalOpen(false)}
+          onSubmit={handleCreateTodo}
+          isSubmitting={isSubmitting}
+        />
+      )}
+      </div>
+    );
+  }
+
+
   return (
     <div className="flex min-h-screen flex-col pb-20 bg-gray-900 relative">
-      <div className="w-full bg-gray-900 shadow-md shadow-black/30">
+    
         {/* Main Header */}
         <div className="border-b border-gray-800 bg-gray-800/90 backdrop-blur-sm p-6 w-full">
           <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-4">
@@ -235,7 +313,7 @@ function TodayTasksPage() {
 
         {/* Action bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-gray-800/60 backdrop-blur-sm">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setIsNewTodoModalOpen(true)}
               className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
@@ -303,6 +381,7 @@ function TodayTasksPage() {
                 <option value="dueDate">Due Date</option>
               </select>
             </div>
+           
           </div>
 
           {/* Timer */}
@@ -310,7 +389,7 @@ function TodayTasksPage() {
             <DailyCountdownTimer />
           </div>
         </div>
-      </div>
+      
 
       {/* Task List */}
       <div className="space-y-3 px-4  w-full max-w-5xl mx-auto py-4">
@@ -335,6 +414,26 @@ function TodayTasksPage() {
           </div>
         )}
       </div>
+      <div className="space-y-3 px-4  w-full max-w-5xl mx-auto py-4">
+      <div className="w-full text-2xl text-gray-300"> Subtasks</div>
+        { subtasksData.length>0 ?
+        (  subtasksData.map((subtask)=>(
+            <SubTaskCard key={subtask._id} subtask={subtask} onDelete={handleSubtaskDelete} onUpdate={handleSubtaskUpdate}/>
+          ))):(
+            <div className="flex  flex-col items-center justify-center p-8">
+            <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 max-w-md w-full text-center">
+              <Calendar className="h-16 w-16 text-gray-400 mx-auto" />
+              <h3 className="mt-4 text-xl font-semibold text-white">
+                No subtasks for today
+              </h3>
+              <p className="mt-2 text-gray-400">
+                You don&apos;t have any tasks due today. Enjoy your day or add a new task to get started.
+              </p>
+            </div>
+          </div>
+          )
+        }
+      </div>
       
       {/* New Todo Modal */}
       {isNewTodoModalOpen && (
@@ -344,6 +443,7 @@ function TodayTasksPage() {
           isSubmitting={isSubmitting}
         />
       )}
+
     </div>
   );
 }
