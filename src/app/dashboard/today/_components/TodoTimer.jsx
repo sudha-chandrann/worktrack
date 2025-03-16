@@ -37,7 +37,7 @@ const DailyCountdownTimer = () => {
 
   return (
     <div className="max-w-md mx-auto  py-1 bg-transparent rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold text-center mb-1 text-gray-200">Time Left Today</h1>
+      <h1 className="text-2xl font-bold text-center mb-1 text-gray-200">Time Left For Today</h1>
       
       <div className="flex justify-center items-center space-x-4 mt-2">
         <div className="flex flex-col items-center">

@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux'
 import NewTodoModal from './_components/NewTodoModal';
 import TodoCard from './_components/TodoCard';
-import { useRouter } from 'next/navigation';
 
 function Page() {
   const inboxid=useSelector((state)=>state.user.inbox);
@@ -14,7 +13,6 @@ function Page() {
   const [isloading,setisloading]=useState(false);
   const [isError,setisError]=useState(false);
   const [data,setdata]=useState(null);
-  const router= useRouter();
   const [isSubmitting,setisisSubmitting]=useState(false);
 
   const getInboxtodos= async()=>{
@@ -91,7 +89,7 @@ function Page() {
      try{
         const response= await axios.patch(`/api/projects/${inboxid}/todos/${id}`,updateData);
         toast.success(response.data.message||"Todo is Updated Successfully");
-        router.refresh();
+        getInboxtodos()
       }
       catch(error){
         console.log(" the error in updating todo ",error);
@@ -103,7 +101,7 @@ function Page() {
       try{
         const response= await axios.delete(`/api/projects/${inboxid}/todos/${id}`);
         toast.success(response.data.message||"Todo is deleted Successfully");
-        router.refresh();
+        getInboxtodos()
       }
       catch(error){
         console.log(" the error in updating todo ",error);
@@ -116,7 +114,7 @@ function Page() {
             setisisSubmitting(true);
             const response= await axios.post(`/api/projects/${inboxid}`,data)
             toast.success(response.data.message)
-            router.refresh()
+            getInboxtodos()
         }
         catch(error){
            toast.error(error.response?.data?.message||"Something went wrong !")

@@ -15,6 +15,22 @@ function Page({ params }) {
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
   const [isSubmitting, setisSubmitting] = useState(false);
   const router = useRouter();
+  
+  const fetchTodoData = async () => {
+    try {
+      setisloading(true);
+      const response = await axios.get(
+        `/api/projects/${ProjectId}/todos/${todoId}`
+      );
+      settododata(response.data.data);
+      console.log("The todo data is", response.data.data);
+    } catch (error) {
+      console.error("Error fetching todo data:", error);
+      seterror(error.response?.data?.message || "Something went wrong !");
+    } finally {
+      setisloading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchTodoData = async () => {
@@ -32,7 +48,6 @@ function Page({ params }) {
         setisloading(false);
       }
     };
-
     if (todoId && ProjectId) {
       fetchTodoData();
     }
@@ -45,7 +60,7 @@ function Page({ params }) {
         updatedData
       );
       toast.success(response.data.message || "Todo is Updated Successfully");
-      router.refresh();
+      fetchTodoData();
     } catch (error) {
       console.log(" the error in updating todo ", error);
       toast.error(error.response?.data?.message || "Something went wrong");
@@ -57,7 +72,7 @@ function Page({ params }) {
         `/api/projects/${ProjectId}/todos/${todoId}`
       );
       toast.success(response.data.message || "Todo is deleted Successfully");
-      router.refresh();
+      fetchTodoData();
     } catch (error) {
       console.log(" the error in updating todo ", error);
       toast.error(error.response?.data?.message || "Something went wrong");
@@ -71,6 +86,7 @@ function Page({ params }) {
         subtaskData
       );
       toast.success(response.data.message || "Subtask is added Successfully");
+      fetchTodoData();
     } catch (err) {
       console.error("Error adding subtask:", err);
       seterror(err.response?.data?.message || "Something went wrong!");
