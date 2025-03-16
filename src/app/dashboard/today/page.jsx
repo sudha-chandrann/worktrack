@@ -181,7 +181,7 @@ function TodayTasksPage() {
             No tasks for today
           </h3>
           <p className="mt-2 text-gray-400">
-            You don't have any tasks due today. Enjoy your day or add a new task to get started.
+            You don&apos;t have any tasks due today. Enjoy your day or add a new task to get started.
           </p>
           <button
             onClick={() => setIsNewTodoModalOpen(true)}
@@ -204,7 +204,7 @@ function TodayTasksPage() {
             <div>
               <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                 <Calendar className="h-6 w-6 text-indigo-400" />
-                Today's Tasks
+                Today&lsquo;s Tasks
               </h1>
               <p className="mt-1 text-gray-300 font-medium">
                 {format(new Date(), "EEEE, MMMM d, yyyy")}
