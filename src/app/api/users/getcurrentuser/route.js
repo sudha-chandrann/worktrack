@@ -24,8 +24,13 @@ export async function GET(req) {
 
     // Fetch user with selected fields for security and performance
     const user = await User.findById(id)
-      .select("_id username email projects inbox teams") // Only return necessary fields
-      .lean(); // Optimize query performance
+    .select("_id username email projects inbox teams") 
+    .populate({
+      path: "projects",
+      select: "_id name icon", 
+    })
+    .lean(); // Optimize query performance
+  
 
     if (!user) {
       return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });

@@ -5,6 +5,8 @@ import SidebarItem from "./SideBarItem";
 import { Inbox, Calendar, Clock, Filter, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import SideBarProjectItem from "./SideBarProjectItem";
 
 const DashboardRoutes = [
   {
@@ -31,6 +33,8 @@ const DashboardRoutes = [
 
 function Sidebar() {
   const router = useRouter();
+  const projects = useSelector((state) => state.user.projects);
+  console.log(" the projects are ", projects);
   return (
     <div className="w-full h-full overflow-y-auto bg-gray-900 text-gray-300 border-r border-gray-800">
       <div className="flex items-center gap-3 px-6 py-8">
@@ -61,7 +65,7 @@ function Sidebar() {
         ))}
       </div>
 
-      <div className="mt-8 space-y-1 px-3">
+      <div className="mt-2 space-y-1 px-3">
         <div className="w-full items-center flex justify-between  px-6 py-3 border-b">
           <h2 className="text-sm uppercase font-bold tracking-wider text-gray-500">
             Projects
@@ -75,6 +79,15 @@ function Sidebar() {
             <PlusIcon className="h-5 w-5 stroke-2" />
           </button>
         </div>
+        {projects.length > 0 &&
+          projects.map((project) => (
+            <SideBarProjectItem
+              key={project._id}
+              icon={project.icon}
+              label={project.name}
+              href={project._id}
+            />
+          ))}
 
         {/* Project list would go here */}
       </div>
