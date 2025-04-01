@@ -3,30 +3,15 @@
 import {  XIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
-const EMOJI_OPTIONS = ["📝", "🚀", "💻", "📊", "🔍", "📱", "🌐", "⚙️", "📈", "🔒"];
-const COLOR_OPTIONS = [
-  { value: "#3498db", name: "Blue" },
-  { value: "#e74c3c", name: "Red" },
-  { value: "#2ecc71", name: "Green" },
-  { value: "#f39c12", name: "Orange" },
-  { value: "#9b59b6", name: "Purple" },
-  { value: "#1abc9c", name: "Teal" },
-  { value: "#34495e", name: "Dark" },
-  { value: "#7f8c8d", name: "Gray" }
-];
 
-const NewProjectModal = ({ onSubmit, isSubmitting }) => {
+const TeamCreateForm = ({ onSubmit, isSubmitting }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [icon, setIcon] = useState("📝");
-  const [color, setColor] = useState("#3498db");
   const [isFormValid, setIsFormValid] = useState(false);
   
   const onClose = () => {
     setName("");
     setDescription("");
-    setIcon("📝");
-    setColor("#3498db");
     setIsFormValid(false);
   };
 
@@ -39,14 +24,14 @@ const NewProjectModal = ({ onSubmit, isSubmitting }) => {
     e.preventDefault();
     if (!isFormValid) return;
 
-    onSubmit({ name, description, icon, color });
+    onSubmit({ name, description });
   };
 
   return (
-    <div className="flex items-center justify-center p-4">
+    <div className="flex items-center justify-center p-4 min-w-min">
       <div className="bg-gray-800 rounded-lg w-full max-w-md shadow-xl border border-gray-700">
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
-          <h2 className="text-lg font-semibold text-white">Create New Project</h2>
+          <h2 className="text-lg font-semibold text-white">Create New Team</h2>
           <button 
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -59,11 +44,11 @@ const NewProjectModal = ({ onSubmit, isSubmitting }) => {
           {/* Project Name */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Project Name <span className="text-red-500">*</span>
+              Team Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              placeholder="Enter project name"
+              placeholder="Enter team name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-gray-700 text-white p-3 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -77,64 +62,12 @@ const NewProjectModal = ({ onSubmit, isSubmitting }) => {
               Description <span className="text-red-500">*</span>
             </label>
             <textarea
-              placeholder="Describe your project's purpose and goals"
+              placeholder="Describe your Team's purpose and goals"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full bg-gray-700 text-white p-3 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent h-24 resize-none"
               required
             />
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
-            {/* Icon Picker */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Project Icon</label>
-              <div className="bg-gray-700 rounded-md border border-gray-600 p-2">
-                <div className="flex items-center mb-2 bg-gray-800 rounded p-2 border border-gray-600">
-                  <span className="text-2xl mr-2">{icon}</span>
-                  <span className="text-sm text-gray-400">Selected Icon</span>
-                </div>
-                <div className="grid grid-cols-5 gap-1">
-                  {EMOJI_OPTIONS.map((emoji) => (
-                    <button
-                      key={emoji}
-                      type="button"
-                      onClick={() => setIcon(emoji)}
-                      className={`flex items-center justify-center h-8 w-8 rounded ${
-                        icon === emoji ? "bg-gray-600 ring-2 ring-indigo-500" : "bg-gray-800 hover:bg-gray-700"
-                      }`}
-                    >
-                      <span>{emoji}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Color Picker */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Project Color</label>
-              <div className="bg-gray-700 rounded-md border border-gray-600 p-2">
-                <div 
-                  className="h-10 mb-2 rounded border border-gray-600"
-                  style={{ backgroundColor: color }}
-                />
-                <div className="grid grid-cols-4 gap-1">
-                  {COLOR_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => setColor(option.value)}
-                      className={`h-8 w-full rounded transition-all ${
-                        color === option.value ? "ring-2 ring-white" : ""
-                      }`}
-                      style={{ backgroundColor: option.value }}
-                      title={option.name}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Error Message */}
@@ -170,7 +103,7 @@ const NewProjectModal = ({ onSubmit, isSubmitting }) => {
                   </svg>
                   Creating...
                 </span> : 
-                "Create Project"
+                "Create Team"
               }
             </button>
           </div>
@@ -180,4 +113,4 @@ const NewProjectModal = ({ onSubmit, isSubmitting }) => {
   );
 };
 
-export default NewProjectModal;
+export default TeamCreateForm;

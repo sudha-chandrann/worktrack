@@ -29,6 +29,10 @@ export async function GET(req) {
       path: "projects",
       select: "_id name icon", 
     })
+    .populate({
+      path: "teams",
+      select: "_id name ", 
+    })
     .lean(); // Optimize query performance
   
 
