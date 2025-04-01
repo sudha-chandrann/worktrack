@@ -1,4 +1,5 @@
 
+import mongoose from "mongoose";
 import dbConnect from "../../../../lib/dbconnect";
 import { Project, Todo } from "../../../../models/user.model"
 import { getDataFromToken } from "../../../../utils/getdatafromtoken"
@@ -13,15 +14,15 @@ export async function POST(req, context) {
     const { params } = context;
     const projectId = params.projectId;
 
-    if (!projectId) {
+    if (!projectId || !mongoose.Types.ObjectId.isValid(projectId)) {
       return NextResponse.json(
         {
           data: null,
-          error: "Project ID is required",
+          error: "Invalid or missing Project ID",
           success: false,
         },
         {
-          status: 404,
+          status: 400, // Bad Request
         }
       );
     }
@@ -58,7 +59,7 @@ export async function POST(req, context) {
       priority: priority || "medium",
       dueDate: dueDate || null,
       tags: tags || [],
-      project: projectId,
+      project: project._id,
       assignedTo: id,
       assignedBy: id,
       status: "to-do",
@@ -79,7 +80,7 @@ export async function POST(req, context) {
       }
     );
   } catch (error) {
-    console.error('Error creating inbox todo:', error);
+    console.error('Error creating  todo:', error);
     return NextResponse.json({
       success: false,
       message: error.message||'Internal server error',
@@ -91,3 +92,29 @@ export async function POST(req, context) {
 );
   }
 }
+
+
+export async function GET(req,context) {
+    try {
+      await dbConnect();
+      const id = getDataFromToken(req);
+      const { params } = context;
+      const projectId = params.projectId;
+      if (!id) {
+        return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+      }
+      if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        return NextResponse.json({ success: false, message: "Invalid user ID" }, { status: 400 });
+      }
+
+      const todos = await Project.findById(projectId)
+      .populate("todos", "title description status priority _id dueDate completedAt tags project")
+      .populate("createdBy", "username fullName")
+      ;
+
+      return NextResponse.json({ success: true, data:todos, message: " todos found" }, { status: 200 });
+    } catch (error) {
+      console.error("Error in GET /api/users/getalltodos:", error);
+      return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+    }
+  }
