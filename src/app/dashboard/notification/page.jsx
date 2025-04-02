@@ -11,6 +11,7 @@ const NotificationsPage = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const getnotifcation = async () => {
     try {
       setLoading(true);
@@ -41,9 +42,11 @@ const NotificationsPage = () => {
 
   const handleDeleteNotification = async (notificationId) => {
     try {
-      toast.success("Notification deleted");
+      const response=await axios.delete(`/api/notifications/${notificationId}`);
+      toast.success(response.data.message||"Notification deleted");
+      getnotifcation();
     } catch (error) {
-      toast.error("Failed to delete notification");
+      toast.error(error.response?.data?.message||"Failed to delete notification");
     }
   };
 

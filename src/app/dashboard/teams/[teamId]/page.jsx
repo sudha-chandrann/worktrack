@@ -2,8 +2,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { AlertCircle, Plus, UserPlus, Users } from "lucide-react";
-import { Button } from "../../../../components/ui/button"
+import { Button } from "../../../../components/ui/button";
 import AddMemberModal from "../_components/AddMemberModal";
+import MemberCard from "../_components/MemberCard";
 
 function Page({ params }) {
   const { teamId } = params;
@@ -26,13 +27,6 @@ function Page({ params }) {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleAddMember = async (email) => {
-    // Implementation for adding member
-    console.log("Adding member with email:", email);
-    // Add API call here
-    setAddMemberModalOpen(false);
   };
 
   const handleAddProject = async (projectData) => {
@@ -101,33 +95,46 @@ function Page({ params }) {
             <p className="text-gray-500">{team.description}</p>
           </div>
           {isAdmin && (
-          <div className="flex gap-2">
-            <Button
-              variant="outline" 
-              onClick={() => setAddMemberModalOpen(true)}
-              className="flex items-center gap-2"
-            >
-              <UserPlus size={16} />
-              Add Member
-            </Button>
-            <Button 
-              onClick={() => setAddProjectModalOpen(true)}
-              className="flex items-center gap-2 bg-slate-700 hover:bg-slate-800"
-            >
-              <Plus size={16} />
-              New Project
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setAddMemberModalOpen(true)}
+                className="flex items-center gap-2"
+              >
+                <UserPlus size={16} />
+                Add Member
+              </Button>
+              <Button
+                onClick={() => setAddProjectModalOpen(true)}
+                className="flex items-center gap-2 bg-slate-700 hover:bg-slate-800"
+              >
+                <Plus size={16} />
+                New Project
+              </Button>
+            </div>
+          )}
+        </div>
+        <div className=" w-full">
+          <p className="text-white">Members</p>
+          <div className="flex flex-col gap-2">
+          {team?.members?.length > 0 ? (
+            team.members.map((member) => (
+              <MemberCard key={member._id} member={member} isAdmin={isAdmin} teamId={teamId} />
+            ))
+          ) : (
+            <p className="text-gray-400">No members found.</p>
+          )}
           </div>
-        )}
+
         </div>
         {addMemberModalOpen && (
-        <AddMemberModal 
-          isOpen={addMemberModalOpen} 
-          onClose={() => setAddMemberModalOpen(false)}
-          onAddMember={handleAddMember}
-          teamId={teamId}
-        />
-      )}
+          <AddMemberModal
+            isOpen={addMemberModalOpen}
+            onClose={() => setAddMemberModalOpen(false)}
+            teamId={teamId}
+
+          />
+        )}
       </div>
     </div>
   );

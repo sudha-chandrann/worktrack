@@ -82,7 +82,7 @@ export async function PATCH(req, context) {
 
     const roleMatch = notification.message.match(/as (\w+)$/);
     const role = roleMatch ? roleMatch[1] : "member"; 
-    
+
     // Add user to the team's members list
     if (!isAlreadyMember) {
       team.members.push({ user: user._id, role });
@@ -115,3 +115,67 @@ export async function PATCH(req, context) {
     );
   }
 }
+
+
+export async function DELETE(req, context) {
+    try {
+      await dbConnect();
+  
+      // Authenticate user
+      const userId = getDataFromToken(req);
+      if (!userId) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Authentication failed. Please log in.",
+            data: null,
+          },
+          { status: 401 }
+        );
+      }
+  
+      // Get and validate notification ID from route parameters
+      const notificationId = context.params.notificationId;
+  
+      if (!mongoose.Types.ObjectId.isValid(notificationId)) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Invalid notification ID format",
+            data: null,
+          },
+          { status: 400 }
+        );
+      }
+  
+      // Find and update notification
+      const notification = await Notification.findByIdAndDelete( notificationId );
+      if (!notification) {
+        return NextResponse.json(
+          { success: false, message: "Notification not found", data: null },
+          { status: 404 }
+        );
+      }
+
+  
+      return NextResponse.json(
+        {
+          success: true,
+          message: "notification is Deleted successfully",
+          data: notification,
+        },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error("Error deleting notification :", error);
+      return NextResponse.json(
+        {
+          success: false,
+          message: error.message || "Failed to delete notification",
+          data: null,
+        },
+        { status: 500 }
+      );
+    }
+ }
+  
