@@ -12,8 +12,8 @@ function Page() {
         try{
             setisSubmitting(true);
             const response= await axios.post(`/api/teams`,data);
-            toast.success(response.data.message||" new tean is Created Successfully");
-            router.push(`/projects/${response.data.data.projectId}`)
+            toast.success(response.data.message||" new team is Created Successfully");
+            router.push(`/dashboard/teams/${response.data.data.teamId}`)
         }
         catch(err){
             toast.error(err.response?.data.message||"something went wrong !");
