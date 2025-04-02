@@ -23,8 +23,9 @@ import {
 import { ScrollArea } from "../../../../components/ui/scroll-area";
 import { Search, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "../../../../components/ui/alert";
+import toast from "react-hot-toast";
 
-export default function AddMemberModal({ isOpen, onClose, onAddMember, teamId }) {
+export default function AddMemberModal({ isOpen, onClose, teamId }) {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [role, setRole] = useState("member");
@@ -91,7 +92,7 @@ export default function AddMemberModal({ isOpen, onClose, onAddMember, teamId })
     e.preventDefault();
     
     if (selectedUserIds.length === 0) {
-      setError("Please select at least one user to add to the team");
+      setError("Please select at least one user to invite to the team");
       return;
     }
     
@@ -99,10 +100,10 @@ export default function AddMemberModal({ isOpen, onClose, onAddMember, teamId })
     setError("");
     
     try {
-      // Handle adding multiple users
+      // Handle sending multiple invitations
       const promises = selectedUserIds.map(userId => 
         axios.post(`/api/teams/${teamId}/members`, {
-          userId,
+          memberId:userId,
           role
         })
       );
@@ -111,22 +112,21 @@ export default function AddMemberModal({ isOpen, onClose, onAddMember, teamId })
       const failures = results.filter(result => result.status === 'rejected');
       
       if (failures.length === 0) {
-        // All users added successfully
-        selectedUserIds.forEach(userId => onAddMember(userId));
+        // All invitations sent successfully
+        toast.success(`Successfully sent invitations to ${selectedUserIds.length} user${selectedUserIds.length !== 1 ? 's' : ''}.`,);
         onClose();
       } else {
-        setError(`Failed to add ${failures.length} of ${selectedUserIds.length} members`);
+        setError(`Failed to send ${failures.length} of ${selectedUserIds.length} invitations`);
         
-        // Add the successful ones
-        results.forEach((result, index) => {
-          if (result.status === 'fulfilled' && result.value.data.success) {
-            onAddMember(selectedUserIds[index]);
-          }
-        });
+        // Show toast for successful ones
+        const successCount = results.filter(result => result.status === 'fulfilled').length;
+        if (successCount > 0) {
+          toast.success(`Successfully sent ${successCount} invitation${successCount !== 1 ? 's' : ''}.`);
+        }
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to add members to team");
-      console.error("Error adding team members:", err);
+      setError(err.response?.data?.message || "Failed to send team invitations");
+      console.error("Error sending team invitations:", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -179,7 +179,7 @@ export default function AddMemberModal({ isOpen, onClose, onAddMember, teamId })
     <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Team Members</DialogTitle>
+          <DialogTitle>Invite Team Members</DialogTitle>
         </DialogHeader>
 
         {error && (
@@ -309,9 +309,9 @@ export default function AddMemberModal({ isOpen, onClose, onAddMember, teamId })
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Adding...
+                  Sending...
                 </>
-              ) : `Add ${selectedUserIds.length ? selectedUserIds.length : ""} Member${selectedUserIds.length !== 1 ? "s" : ""}`}
+              ) : `Invite ${selectedUserIds.length ? selectedUserIds.length : ""} User${selectedUserIds.length !== 1 ? "s" : ""}`}
             </Button>
           </DialogFooter>
         </form>

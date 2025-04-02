@@ -348,43 +348,43 @@ const commentSchema = new Schema({
 //     }
 // }, { timestamps: true });
 
-// // Notification Schema (New)
-// const notificationSchema = new Schema({
-//     recipient: {
-//         type: Schema.Types.ObjectId,
-//         ref: "User",
-//         required: true
-//     },
-//     sender: {
-//         type: Schema.Types.ObjectId,
-//         ref: "User"
-//     },
-//     type: {
-//         type: String,
-//         enum: ["assignment", "mention", "comment", "deadline", "invitation", "completion"],
-//         required: true
-//     },
-//     entityType: {
-//         type: String,
-//         enum: ["todo", "subtask", "project", "team", "comment"],
-//         required: true
-//     },
-//     entityId: {
-//         type: Schema.Types.ObjectId,
-//         required: true
-//     },
-//     message: {
-//         type: String,
-//         required: true
-//     },
-//     isRead: {
-//         type: Boolean,
-//         default: false
-//     },
-//     link: {
-//         type: String
-//     }
-// }, { timestamps: true });
+// Notification Schema (New)
+const notificationSchema = new Schema({
+    recipient: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    sender: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    },
+    type: {
+        type: String,
+        enum: ["assignment", "mention", "comment", "deadline", "invitation", "completion"],
+        required: true
+    },
+    entityType: {
+        type: String,
+        enum: ["todo", "subtask", "project", "team", "comment"],
+        required: true
+    },
+    entityId: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    message: {
+        type: String,
+        required: true
+    },
+    isRead: {
+        type: Boolean,
+        default: false
+    },
+    link: {
+        type: String
+    }
+}, { timestamps: true });
 
 // Export all models
 export const User = mongoose.models.User || mongoose.model('User', userSchema);
@@ -394,4 +394,4 @@ export const Team = mongoose.models.Team || mongoose.model('Team', teamSchema);
 export const Project = mongoose.models.Project || mongoose.model('Project', projectSchema);
 export const Comment = mongoose.models.Comment || mongoose.model('Comment', commentSchema);
 // export const ActivityLog = mongoose.models.ActivityLog || mongoose.model('ActivityLog', activityLogSchema);
-// export const Notification = mongoose.models.Notification || mongoose.model('Notification', notificationSchema);
+export const Notification = mongoose.models.Notification || mongoose.model('Notification', notificationSchema);
