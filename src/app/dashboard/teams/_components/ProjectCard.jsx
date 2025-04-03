@@ -6,7 +6,7 @@ const ProjectCard = ({ project, teamId }) => {
   const router = useRouter();
 
   const viewProject = () => {
-    router.push(`/dashboard/teams/${teamId}/${project._id}`);
+    router.push(`/teams/${teamId}/${project._id}`);
   };
   
   return (
