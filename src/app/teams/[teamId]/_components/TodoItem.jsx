@@ -233,22 +233,7 @@ const TodoItem = ({ todo, onUpdate, onDelete, isAdmin, teamId, userId, members }
                         Edit
                       </DropdownMenuLabel>
                       
-                      {isAdmin && members && members.length > 0 && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuLabel className="p-1">Reassign</DropdownMenuLabel>
-                          {members.map((member) => (
-                            <DropdownMenuLabel
-                              key={member._id}
-                              onClick={() => onUpdate(todo._id, { assignedTo: member._id })}
-                              className="flex items-center gap-2 p-2 hover:bg-gray-900 cursor-pointer"
-                            >
-                              <UserPlus className="w-4 h-4" />
-                              <span>{userId === member._id ? "Me" : `@${member.username}`}</span>
-                            </DropdownMenuLabel>
-                          ))}
-                        </>
-                      )}
+
                       
                       <DropdownMenuSeparator />
     
