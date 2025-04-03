@@ -6,7 +6,7 @@ import Sidebar from "./SideBar";
 import { Sheet, SheetContent, SheetTrigger } from "../../../../components/ui/sheet"
 
 
-function Navbar({team,isAdmin}) {
+function Navbar({team,isAdmin,setfetchdataagain}) {
   return (
     <div className="h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4 md:px-6">
       <div className="flex items-center">
@@ -16,7 +16,7 @@ function Navbar({team,isAdmin}) {
               <Menu className="h-5 w-5" />
             </SheetTrigger>
             <SheetContent side="left" className="p-0 bg-gray-900 border-r border-gray-800"   >
-              <Sidebar team={team} isAdmin={isAdmin}/>
+              <Sidebar team={team} isAdmin={isAdmin} setfetchdataagain={setfetchdataagain}/>
             </SheetContent>
           </Sheet>
         </div>

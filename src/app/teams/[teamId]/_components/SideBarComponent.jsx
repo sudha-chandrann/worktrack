@@ -9,11 +9,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 function SideBarItem({ icon, href, label }) {
   const pathname = usePathname();
-  const hrefname = `/teams/${href}`.replace(/\/$/, ""); 
-  const isActive = pathname.replace(/\/$/, "") === hrefname || pathname.startsWith(hrefname);
+  
+  const isActive = pathname === href || pathname.startsWith(href);
   return (
     <Link
-      href={`/teams/${href}/`}
+      href={`${href}`}
       className={cn(
         "flex items-center gap-3 px-4 py-3 rounded-md transition-colors duration-200",
         isActive

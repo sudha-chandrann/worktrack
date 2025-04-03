@@ -11,7 +11,7 @@ export default function RootLayout({ children, params }) {
   const [team, setTeam] = useState(null);
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-
+  const [fetchdataagain,setfetchdataagain]=useState(false);
   const fetchTeamData = async () => {
     if (!teamId) return;
     
@@ -34,7 +34,7 @@ export default function RootLayout({ children, params }) {
   useEffect(() => {
     fetchTeamData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teamId]);
+  }, [teamId,fetchdataagain]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -47,11 +47,11 @@ export default function RootLayout({ children, params }) {
   return (
     <div className="h-screen flex flex-col">
         <div className="h-[60px] md:pl-56 lg:pl-64 fixed insert-y-0 w-full bg-white z-50">
-        <Navbar team={team} isAdmin={isAdmin} />
+        <Navbar team={team} isAdmin={isAdmin} setfetchdataagain={setfetchdataagain} />
       </div>
       
       <div className="hidden md:flex w-56 lg:w-64 h-full flex-col fixed insert-y-0 z-50 ">
-      <Sidebar team={team} isAdmin={isAdmin} />
+      <Sidebar team={team} isAdmin={isAdmin} setfetchdataagain={setfetchdataagain} />
       </div>
       
       <div className="md:ml-56 lg:ml-64 mt-[60px] w-full bg-gray-900">{children}</div>
