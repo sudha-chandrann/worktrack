@@ -261,16 +261,11 @@ export async function GET(req, context) {
         .populate("project", "name description icon color")
         .populate({
           path: "subtasks",
-          populate: [
-            {
+          populate:  {
               path: "assignedTo",
               select: "username fullName email",
-            },
-            {
-              path: "assignedBy",
-              select: "username fullName email",
             }
-          ],
+          
         })
         .populate({
           path: "comments",
@@ -340,17 +335,30 @@ export async function POST(req, context) {
 
   try {
     const id = getDataFromToken(req);
-    const { title, description, priority, dueDate, status, parentTask } =
-      await req.json();
+    const { title, description, priority, dueDate, status, parentTask } =await req.json();
     const { params } = context;
     const projectId = params.projectId;
     const todoId = params.todoId;
+    const teamId= params.teamId;
 
-    if (!projectId) {
+    if (!projectId|| !teamId || !todoId) {
       return NextResponse.json(
         {
           data: null,
-          error: "Project ID is required",
+          message: "Project ID, team Id and Todo Id are required",
+          success: false,
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+    const team = await Team.findById(teamId);
+    if (!team) {
+      return NextResponse.json(
+        {
+          data: null,
+          message: "team not found",
           success: false,
         },
         {

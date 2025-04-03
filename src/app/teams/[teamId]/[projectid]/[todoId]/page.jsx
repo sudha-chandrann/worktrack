@@ -2,11 +2,11 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import AddSubtaskForm from "../../../../projects/_components/AddSubtaskForm";
-import SubtaskList from "../../../../projects/_components/SubtaskList";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import TodoDetailView from "./_components/TodoDetailView";
+import AddSubtaskForm from "./_components/AddSubtaskForm";
+import SubtaskList from "./_components/SubtaskList";
 
 function Page({ params }) {
   const { projectid, todoId, teamId } = params;
@@ -19,7 +19,7 @@ function Page({ params }) {
   const [isSubmitting, setisSubmitting] = useState(false);
   const router = useRouter();
   const userId = useSelector((state) => state.user._id);
-
+  const [isanyChange,setisanyChange]= useState(false);
   const fetchTodoData = async () => {
     try {
       setisloading(true);
@@ -42,7 +42,7 @@ function Page({ params }) {
       fetchTodoData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [todoId, projectid, teamId]);
+  }, [todoId, projectid, teamId,isanyChange]);
 
   const handleTodoUpdate = async (updatedData) => {
     try {
@@ -72,6 +72,7 @@ function Page({ params }) {
 
   const handleSubtaskAdd = async (subtaskData) => {
     try {
+      setisSubmitting(true);
       const response = await axios.post(
         `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}`,
         subtaskData
@@ -80,7 +81,10 @@ function Page({ params }) {
       fetchTodoData();
     } catch (err) {
       console.error("Error adding subtask:", err);
-      seterror(err.response?.data?.message || "Something went wrong!");
+    }
+    finally{
+      setisSubmitting(false);
+      setIsAddingSubtask(false);
     }
   };
 
@@ -151,15 +155,20 @@ function Page({ params }) {
         <div className="mt-8 bg-gray-800 rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-white">Subtasks</h3>
-            <button
-              onClick={() => setIsAddingSubtask(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Add Subtask
-            </button>
+            {
+              tododata.assignedTo._id === userId && (
+                <button
+                onClick={() => setIsAddingSubtask(true)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Add Subtask
+              </button>
+              )
+            }
+
           </div>
           {isAddingSubtask && (
-            <div className=" w-full h-screen top-0 left-0 fixed bg-gray-400/10 flex items-center justify-center">
+            <div className=" w-full h-screen top-0 left-0 fixed bg-gray-400/10  z-50 flex items-center justify-center">
               <div className="mb-6 p-4 border border-gray-200 rounded-lg">
                 <AddSubtaskForm
                   onSubmit={handleSubtaskAdd}
@@ -175,6 +184,9 @@ function Page({ params }) {
             subtasks={tododata.subtasks || []}
             projectId={projectid}
             todoId={todoId}
+            userId={userId}
+            teamId={teamId}
+            setisanyChange={setisanyChange}
           />
         </div>
       </div>

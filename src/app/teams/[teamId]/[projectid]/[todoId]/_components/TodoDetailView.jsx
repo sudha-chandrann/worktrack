@@ -6,10 +6,10 @@ import StatusBadge from "../../../../../projects/_components/StatusBadge";
 import PriorityTag from "../../../../../projects/_components/PriorityTag";
 import DueDate from "../../../../../projects/_components/DueDate";
 import TagsList from "../../../../../projects/_components/TagsList";
-import TodoEditForm from "../../../../../projects/_components/TodoEditForm";
 import PastDueAlert from "../../../../../projects/_components/PastDueAlert";
 import { CheckIcon, Pen, Trash2 } from "lucide-react";
 import TodoInformationSection from "./TodoInformationSection";
+import TodoEditForm from "./TodoEditForm";
 
 const TodoDetailView = ({
   todo,
