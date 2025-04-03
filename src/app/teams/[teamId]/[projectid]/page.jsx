@@ -15,6 +15,7 @@ import {
 import NewTodoModal from "../_components/NewTodoModal";
 import TodoItem from "../_components/TodoItem";
 import { useSelector } from "react-redux";
+import AlertBox from "../../../_components/AlertBox"
 
 function ProjectPage({ params }) {
   const { projectid, teamId } = params;
@@ -120,9 +121,6 @@ function ProjectPage({ params }) {
 
 
   const handleDeleteProject = async () => {
-    if (!confirm("Are you sure you want to delete this project?")) {
-      return;
-    }
 
     try {
       setIsDeletingProject(true);
@@ -183,14 +181,16 @@ function ProjectPage({ params }) {
               </div>
             </div>
             {isAdmin && (
-              <button
-                onClick={handleDeleteProject}
+              <AlertBox onConfirm={handleDeleteProject}>
+                <button
                 disabled={isDeletingProject}
                 className="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-full hover:bg-gray-700"
                 title="Delete Project"
               >
                 <Trash2 size={20} />
               </button>
+              </AlertBox>
+
             )}
           </div>
 

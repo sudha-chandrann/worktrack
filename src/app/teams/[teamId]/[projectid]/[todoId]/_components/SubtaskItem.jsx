@@ -19,6 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../../../../../components/ui/dropdown-menu"
+import AlertBox from "../../../../../../app/_components/AlertBox";
 
 const SubtaskItem = ({ subtask, onUpdate, onDelete, projectId, todoId, userId, teamId }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -254,13 +255,13 @@ const SubtaskItem = ({ subtask, onUpdate, onDelete, projectId, todoId, userId, t
                           <DropdownMenuLabel
                             className="flex items-center justify-start gap-3 cursor-pointer hover:bg-gray-700"
                           >
-                            {/* <AlertBox onConfirm={()=>{onDelete(subtask._id)}}>
+                            <AlertBox onConfirm={()=>{onDelete(subtask._id)}}>
                               <div className=" flex items-center gap-2">
                                 {" "}
                                 <TrashIcon className="w-4 h-4" />
                                 Delete
                               </div>
-                            </AlertBox> */}
+                            </AlertBox>
                           </DropdownMenuLabel>
                         </DropdownMenuContent>
                       </DropdownMenu>

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { formatDate } from "date-fns";
 import PastDueAlert from "../../../../../../projects/_components/PastDueAlert"
-// import AlertBox from "../../_components/AlertBox";
+import AlertBox from "../../../../../../../app/_components/AlertBox";
 import StatusBadge from "../../../../../../projects/_components/StatusBadge";
 import PriorityTag from "../../../../../../projects/_components/PriorityTag";
 import DueDate from "../../../../../../projects/_components/DueDate";
@@ -10,7 +10,7 @@ import { CheckIcon, Pen, Trash2 } from "lucide-react";
 import SubTaskEditForm from "../../../../../../projects/_components/subtaskEditform";
 import SubtaskInformationSection from "../../../../../../projects/_components/SubTodoInformationsection";
 
-function SubTaskDetailView({ subtask, onUpdate, onDelete }) {
+function SubTaskDetailView({ subtask, onUpdate, onDelete,userId }) {
   const [isPastDue, setIsPastDue] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [minDate, setMinDate] = useState("");
@@ -51,37 +51,47 @@ function SubTaskDetailView({ subtask, onUpdate, onDelete }) {
         <>
           <div className="flex justify-between items-start mb-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleToggleComplete}
-                className={`flex-shrink-0 w-5 h-5 mt-1 rounded-full border ${
-                  subtask.status === "completed"
-                    ? "bg-green-500 border-green-600"
-                    : "bg-transparent border-gray-400"
-                }`}
-              >
-                {subtask.status === "completed" && (
-                  <CheckIcon className="w-4 h-4 text-white" />
-                )}
-              </button>
+                {
+                      subtask.assignedTo._id === userId && (
+                        <button
+                        onClick={handleToggleComplete}
+                        className={`flex-shrink-0 w-5 h-5 mt-1 rounded-full border ${
+                          subtask.status === "completed"
+                            ? "bg-green-500 border-green-600"
+                            : "bg-transparent border-gray-400"
+                        }`}
+                      >
+                        {subtask.status === "completed" && (
+                          <CheckIcon className="w-4 h-4 text-white" />
+                        )}
+                      </button>
+                      )
+                }
+
               <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
                 {subtask.title}
               </h2>
             </div>
-            <div className="flex gap-3 items-center">
-              <button
-                onClick={() => setIsEditing(true)}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-gray-600"
-              >
-                <Pen className="w-4 h-4" />
-                Edit
-              </button>
-              {/* <AlertBox onConfirm={onDelete}>
-                <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
-                  <Trash2 className="w-4 h-4" />
-                  Delete
-                </button>
-              </AlertBox> */}
-            </div>
+            {
+                subtask.assignedTo._id === userId && (
+                    <div className="flex gap-3 items-center">
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-gray-600"
+                    >
+                      <Pen className="w-4 h-4" />
+                      Edit
+                    </button>
+                    <AlertBox onConfirm={onDelete}>
+                      <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
+                        <Trash2 className="w-4 h-4" />
+                        Delete
+                      </button>
+                    </AlertBox>
+                  </div>
+                )
+            }
+
           </div>
 
           <div className="flex items-center gap-2 mb-4 w-full md:gap-4 flex-wrap">

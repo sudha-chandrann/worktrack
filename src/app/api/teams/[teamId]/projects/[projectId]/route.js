@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dbConnect from "../../../../../../lib/dbconnect";
-import { Project, Team,Todo } from "../../../../../../models/user.model";
+import { Project, Subtask, Team,Todo ,Comment} from "../../../../../../models/user.model";
 import { getDataFromToken } from "../../../../../../utils/getdatafromtoken";
 import { NextResponse } from "next/server";
 
@@ -83,6 +83,142 @@ export async function GET(req, context) {
   }
 }
 
+export async function DELETE(req, context) {
+  try {
+    await dbConnect();
+    const id = getDataFromToken(req);
+    const { params } = context;
+    const projectId = params.projectId;
+    const teamId = params.teamId;
+
+    // Check authentication
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    // Validate IDs
+    if (
+      !mongoose.Types.ObjectId.isValid(projectId) ||
+      !mongoose.Types.ObjectId.isValid(teamId)
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Invalid Project ID or Team ID" },
+        { status: 400 }
+      );
+    }
+
+    // Find team and check if user is a member
+    const team = await Team.findById(teamId);
+    if (!team) {
+      return NextResponse.json(
+        { success: false, message: "Team not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if user is a team member
+    const teamMember = team.members.find(
+      (member) => member.user.toString() === id.toString()
+    );
+    if (!teamMember) {
+      return NextResponse.json(
+        { success: false, message: "You are not a member of this team" },
+        { status: 403 }
+      );
+    }
+
+    // Check if user is an admin (only admins can delete projects)
+    if (teamMember.role !== "admin") {
+      return NextResponse.json(
+        { success: false, message: "Only team admins can delete projects" },
+        { status: 403 }
+      );
+    }
+
+    // Find project
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return NextResponse.json(
+        { success: false, message: "Project not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if project belongs to the team
+    if (project.team.toString() !== teamId) {
+      return NextResponse.json(
+        { success: false, message: "Project does not belong to this team" },
+        { status: 400 }
+      );
+    }
+
+    // Start a session for transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      // Get all todos in this project
+      const todos = await Todo.find({ project: projectId });
+      const todoIds = todos.map(todo => todo._id);
+      
+      // Find all subtasks belonging to these todos
+      const subtasks = await Subtask.find({ parentTask: { $in: todoIds } });
+      const subtaskIds = subtasks.map(subtask => subtask._id);
+      
+      // Delete all comments on todos and subtasks
+      await Comment.deleteMany({ 
+        $or: [
+          { taskRef: { $in: todoIds }, onModel: 'Todo' },
+          { taskRef: { $in: subtaskIds }, onModel: 'Subtask' }
+        ]
+      }, { session });
+      
+      // Delete all subtasks
+      await Subtask.deleteMany({ parentTask: { $in: todoIds } }, { session });
+      
+      // Delete all todos
+      await Todo.deleteMany({ project: projectId }, { session });
+      
+      // Remove project reference from the team
+      await Team.findByIdAndUpdate(
+        teamId,
+        { $pull: { projects: projectId } },
+        { session }
+      );
+      
+      // Finally delete the project
+      await Project.findByIdAndDelete(projectId, { session });
+      
+      // Commit the transaction
+      await session.commitTransaction();
+      
+      return NextResponse.json(
+        { 
+          success: true, 
+          message: "Project and all associated data deleted successfully" 
+        },
+        { status: 200 }
+      );
+    } catch (error) {
+      // If anything fails, abort the transaction
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      // End the session
+      session.endSession();
+    }
+    
+  } catch (error) {
+    console.error("Error in DELETE /api/teams/[teamId]/projects/[projectId]:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
 
 
 export async function POST(req, context) {

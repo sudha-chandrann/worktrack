@@ -10,6 +10,7 @@ import PastDueAlert from "../../../../../projects/_components/PastDueAlert";
 import { CheckIcon, Pen, Trash2 } from "lucide-react";
 import TodoInformationSection from "./TodoInformationSection";
 import TodoEditForm from "./TodoEditForm";
+import AlertBox from "../../../../../_components/AlertBox"
 
 const TodoDetailView = ({
   todo,
@@ -79,8 +80,8 @@ const TodoDetailView = ({
               </h2>
             </div>
 
-            <div className="flex gap-3 items-center">
-              {isAdmin && (
+            {isAdmin && (
+              <div className="flex gap-3 items-center">
                 <button
                   onClick={() => setIsEditing(true)}
                   className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-gray-600"
@@ -88,8 +89,14 @@ const TodoDetailView = ({
                   <Pen className="w-4 h-4" />
                   Edit
                 </button>
-              )}
-            </div>
+                <AlertBox onConfirm={onDelete}>
+                  <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+                </AlertBox>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2 mb-4 w-full md:gap-4 flex-wrap">

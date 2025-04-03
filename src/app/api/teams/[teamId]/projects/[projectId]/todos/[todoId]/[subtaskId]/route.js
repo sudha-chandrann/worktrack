@@ -93,7 +93,7 @@ export async function DELETE(req, context) {
   try {
     const userId = getDataFromToken(req);
     const { params } = context;
-    const { todoId, subtaskId } = params;
+    const { todoId, subtaskId, } = params;
 
     if (!subtaskId || !todoId) {
       return NextResponse.json(

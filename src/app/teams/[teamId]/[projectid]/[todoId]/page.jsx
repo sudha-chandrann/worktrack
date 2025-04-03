@@ -63,7 +63,7 @@ function Page({ params }) {
         `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}`,
       );
       toast.success(response.data.message || "Todo is deleted Successfully");
-      fetchTodoData();
+      router.push(`/teams/${teamId}/${projectid}`);
     } catch (error) {
       console.log(" the error in updating todo ", error);
       toast.error(error.response?.data?.message || "Something went wrong");

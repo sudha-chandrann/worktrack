@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import SubTaskDetailView from "./_components/SubTaskDetailView";
+import { useSelector } from "react-redux";
 
 function Page({ params }) {
   const { projectid, todoId, subtodoId, teamId } = params;
@@ -11,6 +12,7 @@ function Page({ params }) {
   const [isLoading, setisloading] = useState(false);
   const [error, seterror] = useState(null);
   const router = useRouter();
+  const userId = useSelector((state)=>state.user._id);
   const fetchTodoData = async () => {
     try {
       setisloading(true);
@@ -76,7 +78,7 @@ function Page({ params }) {
             onClick={() => router.back()}
             className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
           >
-            Back to Project
+            Back to Todo
           </button>
         </div>
       </div>
@@ -96,7 +98,7 @@ function Page({ params }) {
             onClick={() => router.back()}
             className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
           >
-            Back to Project
+            Back to Todo
           </button>
         </div>
       </div>
@@ -118,6 +120,7 @@ function Page({ params }) {
           subtask={subtaskdata}
           onUpdate={handleSubtaskUpdate}
           onDelete={handleSubtaskDelete}
+          userId={userId}
         />
       </div>
     </div>
