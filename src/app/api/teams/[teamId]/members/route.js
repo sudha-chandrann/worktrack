@@ -84,23 +84,6 @@ export async function POST(req, context) {
         { status: 409 } // Changed to 409 Conflict which is more appropriate
       );
     }
-    const alreadyNotification = await Notification.findOne({
-        recipient: memberId,
-        entityId: teamId,
-        type: "invitation",
-        entityType: "team"
-      });
-  
-      if (alreadyNotification) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "An invitation has already been sent to this user",
-            data: { notificationId: alreadyNotification._id },
-          },
-          { status: 200 }
-        );
-      }
     // Create a notification for the user
     const notification = await Notification.create({
       recipient: memberId,

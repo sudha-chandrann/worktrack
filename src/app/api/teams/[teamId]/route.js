@@ -51,7 +51,11 @@ export async function GET(req, context) {
         })
         .populate({
           path: "projects",
-          select: "name description icon color"
+          select: "name description icon color createdBy",
+          populate: {
+            path: "createdBy",
+            select: "username email fullName"
+          }
         });
         
       if (!team) {

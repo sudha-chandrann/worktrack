@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import {  ShieldIcon, CalendarIcon, LoaderIcon } from "lucide-react";
+import {  ShieldIcon, CalendarIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -53,7 +53,24 @@ function MemberCard({ member, isAdmin,teamId }) {
         setisloading(false);
     }
   }
-  
+  const removeMember = async ()=>{
+    try{
+    setisloading(true);
+     const response= await axios.patch(`/api/teams/${teamId}/changerole`,{
+        userId:user._id,
+     })
+     toast.success(response.data.message||"member is removed  successfully");
+     router.refresh();
+    }
+    catch(error){
+      toast.error(error.message||"Failed to remove the member");
+      console.log(" the error is ",error)
+    }
+    finally{
+        setisloading(false);
+    }
+  }
+
   if(isloading){
     <div className="bg-gray-800 rounded-lg w-full p-4 shadow-md flex items-center ">
     <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-blue-500"></div>
@@ -61,7 +78,7 @@ function MemberCard({ member, isAdmin,teamId }) {
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg w-full p-4 shadow-md flex items-center hover:bg-gray-750 transition-colors">
+    <div className="bg-gray-800 rounded-lg w-full p-4 shadow-md flex items-center flex-wrap hover:bg-gray-750 transition-colors">
       <div className="flex-shrink-0 mr-4">
         <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-white font-medium">
           {getInitials(user?.fullName)}
@@ -94,9 +111,12 @@ function MemberCard({ member, isAdmin,teamId }) {
         </div>
       </div>
       {isAdmin && (
-        <div className="flex-shrink-0 ml-2">
+        <div className="flex-shrink-0 flex flex-col items-center gap-2 ml-auto">
           <button className="text-gray-400 hover:text-white px-3 py-1 rounded border border-gray-600 hover:border-gray-500 text-sm transition-colors" onClick={changeRole}>
             {role === "admin" ? "Remove Admin" : "Make Admin"}
+          </button>
+          <button className="text-gray-400 hover:text-white px-3 py-1 rounded border border-gray-600 hover:border-gray-500 text-sm transition-colors flex items-center justify-center" onClick={removeMember}>
+           Remove Member
           </button>
         </div>
       )}

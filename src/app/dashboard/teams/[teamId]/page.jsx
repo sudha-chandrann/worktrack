@@ -5,6 +5,9 @@ import { AlertCircle, Plus, UserPlus, Users } from "lucide-react";
 import { Button } from "../../../../components/ui/button";
 import AddMemberModal from "../_components/AddMemberModal";
 import MemberCard from "../_components/MemberCard";
+import AddProjectModal from "../_components/AddProjectModel";
+import toast from "react-hot-toast";
+import ProjectCard from "../_components/ProjectCard";
 
 function Page({ params }) {
   const { teamId } = params;
@@ -12,6 +15,7 @@ function Page({ params }) {
   const [team, setteam] = useState({});
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSubmitting, setisSubmitting] = useState(false);
   const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
   const [addProjectModalOpen, setAddProjectModalOpen] = useState(false);
 
@@ -30,10 +34,18 @@ function Page({ params }) {
   };
 
   const handleAddProject = async (projectData) => {
-    // Implementation for adding project
-    console.log("Adding project:", projectData);
-    // Add API call here
-    setAddProjectModalOpen(false);
+    try {
+      setisSubmitting(true);
+      const response = await axios.post(`/api/teams/${teamId}/projects`, projectData);
+      toast.success(
+        response.data.message || " new Project is Created Successfully"
+      );
+      fetchTeamData()
+    } catch (err) {
+      toast.error(err.response?.data.message || "something went wrong during creating project  !");
+    } finally {
+      setisSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -84,8 +96,8 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen">
-      <div className="max-w-5xl mx-auto p-6">
+    <div className="bg-gray-900 min-h-screen min-w-fit">
+      <div className="max-w-6xl  mx-auto p-6">
         <div className="flex justify-between items-center mb-6 flex-wrap gap-2 py-2">
           <div className=" flex flex-col gap-2">
             <div className=" flex items-center gap-2 text-white">
@@ -117,22 +129,47 @@ function Page({ params }) {
         <div className=" w-full">
           <p className="text-white">Members</p>
           <div className="flex flex-col gap-2">
-          {team?.members?.length > 0 ? (
-            team.members.map((member) => (
-              <MemberCard key={member._id} member={member} isAdmin={isAdmin} teamId={teamId} />
-            ))
-          ) : (
-            <p className="text-gray-400">No members found.</p>
-          )}
+            {team?.members?.length > 0 ? (
+              team.members.map((member) => (
+                <MemberCard
+                  key={member._id}
+                  member={member}
+                  isAdmin={isAdmin}
+                  teamId={teamId}
+                />
+              ))
+            ) : (
+              <p className="text-gray-400">No members found.</p>
+            )}
           </div>
-
+        </div>
+        <div className=" w-full mt-5">
+          <p className="text-white">Projects</p>
+          <div className="flex flex-col gap-2">
+            {team?.projects?.length > 0 ? (
+              team.projects.map((project) => (
+                <ProjectCard key={project._id} project={project} teamId={teamId}/>
+              ))
+            ) : (
+              <p className="text-gray-400 text-center mt-6 ">
+                No Projects found.
+              </p>
+            )}
+          </div>
         </div>
         {addMemberModalOpen && (
           <AddMemberModal
             isOpen={addMemberModalOpen}
             onClose={() => setAddMemberModalOpen(false)}
             teamId={teamId}
+          />
+        )}
 
+        {addProjectModalOpen && (
+          <AddProjectModal
+            onSubmit={handleAddProject}
+            onclose={() => setAddProjectModalOpen(false)}
+            isSubmitting={isSubmitting}
           />
         )}
       </div>
