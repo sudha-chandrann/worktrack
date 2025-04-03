@@ -25,7 +25,7 @@ const TodoItem = ({ todo, onUpdate, onDelete, isAdmin, teamId, userId, members }
   );
   const [selectedMember, setSelectedMember] = useState(todo.assignedTo._id);
   const router = useRouter();
- console.log(" the members are ", members)
+  
   // Updated priority colors for better visibility on dark backgrounds
   const priorityColors = {
     high: "border-red-500",

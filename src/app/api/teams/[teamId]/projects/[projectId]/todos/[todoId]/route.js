@@ -199,89 +199,141 @@ export async function DELETE(req, context) {
 }
 
 export async function GET(req, context) {
-  await dbConnect();
-
-  try {
-    const id = getDataFromToken(req);
-    const { params } = context;
-    const projectId = params.projectId;
-    const todoId = params.todoId;
-
-    if (!projectId) {
-      return NextResponse.json(
-        {
-          data: null,
-          error: "Project ID is required",
-          success: false,
-        },
-        {
-          status: 404,
-        }
-      );
-    }
-    const project = await Project.findById(projectId);
-
-    if (!project) {
-      return NextResponse.json(
-        {
-          data: null,
-          message: "Project not found",
-          success: false,
-        },
-        {
-          status: 404,
-        }
-      );
-    }
-
-    const todo = await Todo.findById(todoId)
-      .populate("assignedTo", "username fullName")
-      .populate("assignedBy", "username fullName")
-      .populate("project", "name description icon color")
-      .populate({
-        path: "subtasks",
-        populate: {
-          path: "assignedTo",
-          select: "username fullName",
-        },
-      })
-      .populate({
-        path: "comments",
-        populate: {
-          path: "author",
-          select: "username fullName",
-        },
-      });
-    if (!todo) {
-      return NextResponse.json(
-        { data: null, success: false, message: "Todo not found" },
-        { status: 404 }
-      );
-    }
-    return NextResponse.json(
-      {
-        success: true,
-        message: " Todo is found  successfully",
-        data: todo,
-      },
-      {
-        status: 200,
+    try {
+      // Connect to database
+      await dbConnect();
+      
+      // Get user ID from token
+      const userId = getDataFromToken(req);
+      
+      // Extract parameters from context
+      const { params } = context;
+      const { projectId, todoId, teamId } = params;
+      
+      // Validate required parameters
+      if (!projectId || !teamId || !todoId) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Project ID, Team ID, and Todo ID are required",
+            data: null,
+          },
+          { status: 400 }
+        );
       }
-    );
-  } catch (error) {
-    console.error("Error geting todo:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: error.message || "Internal server error",
-        data: null,
-      },
-      {
-        status: 500,
+      
+      // Find team by ID
+      const team = await Team.findById(teamId)
+        .populate({
+          path: 'members.user',
+          select: 'username fullName email _id'
+        });
+      
+      if (!team) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Team not found",
+            data: null,
+          },
+          { status: 404 }
+        );
       }
-    );
+      
+      // Find project by ID
+      const project = await Project.findById(projectId);
+      
+      if (!project) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Project not found",
+            data: null,
+          },
+          { status: 404 }
+        );
+      }
+      
+      // Find todo with detailed population
+      const todo = await Todo.findById(todoId)
+        .populate("assignedTo", "username fullName email")
+        .populate("assignedBy", "username fullName email")
+        .populate("project", "name description icon color")
+        .populate({
+          path: "subtasks",
+          populate: [
+            {
+              path: "assignedTo",
+              select: "username fullName email",
+            },
+            {
+              path: "assignedBy",
+              select: "username fullName email",
+            }
+          ],
+        })
+        .populate({
+          path: "comments",
+          populate: {
+            path: "author",
+            select: "username fullName",
+          },
+        });
+      
+      if (!todo) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            message: "Todo not found",
+            data: null 
+          },
+          { status: 404 }
+        );
+      }
+      
+      // Format team members data with detailed user information
+      const formattedMembers = team.members.map((member) => ({
+        user: {
+          _id: member.user._id,
+          username: member.user.username,
+          fullName: member.user.fullName,
+          email: member.user.email
+        },
+        role: member.role,
+        joinedAt: member.joinedAt
+      }));
+      
+      // Check if current user is an admin
+      const isAdmin = team.members.some(
+        member => member.user._id.toString() === userId && member.role === 'admin'
+      );
+      
+      // Return successful response with all requested data
+      return NextResponse.json(
+        {
+          success: true,
+          message: "Todo retrieved successfully",
+          data: {
+            todo: todo,
+            members: formattedMembers,
+            isAdmin: isAdmin
+          },
+        },
+        { status: 200 }
+      );
+      
+    } catch (error) {
+      console.error("Error fetching todo data:", error);
+      return NextResponse.json(
+        {
+          success: false,
+          message: error.message || "Internal server error",
+          data: null,
+        },
+        { status: 500 }
+      );
+    }
   }
-}
 
 export async function POST(req, context) {
   await dbConnect();
