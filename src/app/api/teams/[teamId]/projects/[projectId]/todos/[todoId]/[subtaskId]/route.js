@@ -176,11 +176,11 @@ export async function GET(req, context) {
       const teamId = params.teamId;
       const todo = await Todo.findById(todoId);
   
-      if (!todo) {
+      if (!todo|| !teamId || !subtaskId) {
         return NextResponse.json(
           {
             data: null,
-            message: "todo not found",
+            message: "todo , teamId and subtaskId not found",
             success: false,
           },
           {
