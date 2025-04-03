@@ -12,11 +12,14 @@ import {
   AlertCircle,
 } from "lucide-react";
 import NewTodoModal from "../_components/NewTodoModal";
+import TodoItem from "../_components/TodoItem";
+import { useSelector } from "react-redux";
 
 function ProjectPage({ params }) {
   const { projectid, teamId } = params;
   const [isLoading, setIsLoading] = useState(true);
   const [project, setProject] = useState(null);
+  const userid= useSelector((state)=>state.user._id)
   const [error, setError] = useState(null);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,7 +56,7 @@ function ProjectPage({ params }) {
       console.log(" the project is ", response.data.data);
       setProject(response.data.data.project);
       setIsAdmin(response.data.data.isAdmin);
-      setProgressStats(calculateProgress(response.data.data.todos));
+      setProgressStats(calculateProgress(response.data.data.project.todos));
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to load project data";
@@ -77,6 +80,34 @@ function ProjectPage({ params }) {
       setIsAddingTask(false);
     }
   };
+
+  
+    const handleUpdateTodo = async (id, updateData) => {
+      try {
+        const response = await axios.patch(
+          `/api/teams/${teamId}/${projectid}/todos/${id}`,
+          updateData
+        );
+        toast.success(response.data.message || "Task updated successfully");
+        fetchProjectData();
+      } catch (error) {
+        console.error("Error updating task:", error);
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
+    };
+  
+    const handleDeleteTodo = async (id) => {
+      try {
+        const response = await axios.delete(
+          `/api/teams/${teamId}/${projectid}/todos/${id}`
+        );
+        toast.success(response.data.message || "Task deleted successfully");
+        fetchProjectData();
+      } catch (error) {
+        console.error("Error deleting task:", error);
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
+    };
 
   useEffect(() => {
     fetchProjectData();
@@ -215,13 +246,18 @@ function ProjectPage({ params }) {
             <h2 className="text-lg sm:text-xl font-semibold text-white">
               Tasks
             </h2>
-            <button
-              onClick={() => setIsAddingTask(true)}
-              className="px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2 w-full sm:w-auto"
-            >
-              <Plus size={16} />
-              Add Task
-            </button>
+            {
+              isAdmin && (
+              <button
+                onClick={() => setIsAddingTask(true)}
+                className="px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                <Plus size={16} />
+                Add Task
+              </button>
+              )
+            }
+
           </div>
 
           <div className="p-4 sm:p-6">
@@ -233,8 +269,12 @@ function ProjectPage({ params }) {
                 </p>
               </div>
             ) : (
-              <div className="text-gray-300 text-sm">
-                Task list will appear here
+              <div className="text-gray-300 text-sm flex flex-col gap-1 ">
+                {
+                  project.todos.map((todo)=>(
+                    <TodoItem key={todo._id} onUpdate={handleUpdateTodo} onDelete={handleDeleteTodo} todo={todo} isAdmin={isAdmin} teamId={teamId} userId={userid} members={project.members}/>
+                  ))
+                }
               </div>
             )}
           </div>

@@ -19,7 +19,6 @@ export default function RootLayout({ children }) {
       if (response.data.success) {
         // User is authenticated, set user data in Redux store
         dispatch(login(response.data.data));
-        console.log(" the data  is ",response.data.data)
         setLoading(false);
       } else {
         router.push("/login");

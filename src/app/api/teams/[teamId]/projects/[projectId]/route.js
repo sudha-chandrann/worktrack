@@ -38,10 +38,10 @@ export async function GET(req, context) {
         path: "todos",
         select:
           "title description status priority _id dueDate completedAt tags project",
-        populate: {
-          path: "assignedTo",
-          select: "username email fullName",
-        },
+        populate:  [
+          { path: "assignedTo", select: "username email fullName" },
+          { path: "assignedBy", select: "username email fullName" }
+        ]
       })
       .populate({
         path: "members",
@@ -51,7 +51,8 @@ export async function GET(req, context) {
         },
         select: "user role",
       })
-      .populate("createdBy", "username fullName");
+      .populate("createdBy", "username fullName")
+
 
     const isMember = team.members.find(
       (member) => member.user.toString() === id.toString()

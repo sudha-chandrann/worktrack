@@ -4,6 +4,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Sidebar from "../_components/SideBar";
 import Navbar from "../_components/NavBar";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { login } from "../../../../store/userSlice"
 
 export default function RootLayout({ children, params }) {
   const teamId = params.teamId;
@@ -12,6 +15,27 @@ export default function RootLayout({ children, params }) {
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [fetchdataagain, setfetchdataagain] = useState(false);
+   const router= useRouter();
+
+    const dispatch = useDispatch();
+  
+    const getCurrentUser = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get("/api/users/getcurrentuser");
+        if (response.data.success) {
+          // User is authenticated, set user data in Redux store
+          dispatch(login(response.data.data));
+          setIsLoading(false);
+        } else {
+          router.push("/login");
+        }
+      } catch (error) {
+        console.log("Error fetching current user:", error);
+        router.push("/login");
+      }
+    };
+
 
   const fetchTeamData = async () => {
     if (!teamId) return;
@@ -33,6 +57,7 @@ export default function RootLayout({ children, params }) {
 
   useEffect(() => {
     fetchTeamData();
+    getCurrentUser();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamId, fetchdataagain]);
 
