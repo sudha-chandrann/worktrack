@@ -286,6 +286,7 @@ export async function GET(req, context) {
       })
       .populate({
         path: "comments",
+        options: { sort: { createdAt: -1 } },
         populate: {
           path: "author",
           select: "username fullName",
