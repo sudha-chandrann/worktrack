@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import TodoDetailView from "./_components/TodoDetailView";
 import AddSubtaskForm from "./_components/AddSubtaskForm";
 import SubtaskList from "./_components/SubtaskList";
+import CommentView from "./_components/CommentView";
 
 function Page({ params }) {
   const { projectid, todoId, teamId } = params;
@@ -19,13 +20,16 @@ function Page({ params }) {
   const [isSubmitting, setisSubmitting] = useState(false);
   const router = useRouter();
   const userId = useSelector((state) => state.user._id);
-  const [isanyChange,setisanyChange]= useState(false);
+  const [isanyChange, setisanyChange] = useState(false);
+
+
   const fetchTodoData = async () => {
     try {
       setisloading(true);
       const response = await axios.get(
-        `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}`,
+        `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}`
       );
+      console.log(" the data is ", response.data.data.todo);
       settododata(response.data.data.todo);
       setteammembers(response.data.data.members);
       setisAdmin(response.data.data.isAdmin);
@@ -42,7 +46,7 @@ function Page({ params }) {
       fetchTodoData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [todoId, projectid, teamId,isanyChange]);
+  }, [todoId, projectid, teamId, isanyChange]);
 
   const handleTodoUpdate = async (updatedData) => {
     try {
@@ -57,10 +61,11 @@ function Page({ params }) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
+
   const handleTodoDelete = async () => {
     try {
       const response = await axios.delete(
-        `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}`,
+        `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}`
       );
       toast.success(response.data.message || "Todo is deleted Successfully");
       router.push(`/teams/${teamId}/${projectid}`);
@@ -81,12 +86,12 @@ function Page({ params }) {
       fetchTodoData();
     } catch (err) {
       console.error("Error adding subtask:", err);
-    }
-    finally{
+    } finally {
       setisSubmitting(false);
       setIsAddingSubtask(false);
     }
   };
+  
 
   if (isLoading) {
     return (
@@ -112,6 +117,7 @@ function Page({ params }) {
       </div>
     );
   }
+
   if (!tododata) {
     return (
       <div className="bg-gray-900 flex items-center justify-center h-screen">
@@ -155,17 +161,14 @@ function Page({ params }) {
         <div className="mt-8 bg-gray-800 rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-white">Subtasks</h3>
-            {
-              tododata.assignedTo._id === userId && (
-                <button
+            {tododata.assignedTo._id === userId && (
+              <button
                 onClick={() => setIsAddingSubtask(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >
                 Add Subtask
               </button>
-              )
-            }
-
+            )}
           </div>
           {isAddingSubtask && (
             <div className=" w-full h-screen top-0 left-0 fixed bg-gray-400/10  z-50 flex items-center justify-center">
@@ -189,6 +192,7 @@ function Page({ params }) {
             setisanyChange={setisanyChange}
           />
         </div>
+        <CommentView comments={tododata.comments || []} userId={userId} todoId={todoId} teamId={teamId}/>
       </div>
     </div>
   );
