@@ -39,15 +39,41 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
           if (exists) {
             return prevComments;
           }
-          return [...prevComments, data.comment];
+          return [ data.comment,...prevComments];
         });
-        toast.success("New comment added!");
       }
     };
+    const handleEditComment = (data) => {
+      if (data.success && data.todoId === todoId) {
+        setComments((prevComments) => {
+          return prevComments.map((comment) => {
+            if (comment._id === data.comment._id) {
+              return data.comment;
+            }
+            return comment;
+          });
+        });
+      }
+    };
+    const handleCommentDeleted = (data) => {
+      if (data.success && data.todoId === todoId) {
+        // Remove the deleted comment from state
+        setComments((prevComments) => 
+          prevComments.filter(comment => comment._id !== data.commentId)
+        );
+        
+      }
+    };
+    
 
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("commenttodoAdded", handleNewComment);
+    socket.on("todoCommentEdited", handleEditComment);
+    socket.on("todoCommentDeleted", handleCommentDeleted);
+    socket.on("TodocommentEditSuccess",(data)=>{
+      toast.success(data.message);
+    })
     socket.on("error", (error) => {
       toast.error(error.message || "Something went wrong!");
     });
@@ -56,6 +82,9 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("commenttodoAdded", handleNewComment);
+      socket.off("todoCommentEdited", handleEditComment);
+      socket.off("todoCommentDeleted", handleCommentDeleted);
+      socket.off("TodocommentEditSuccess")
       socket.off("error");
     };
   }, [userId, teamId, todoId]);
@@ -77,6 +106,41 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
     }
   };
 
+  const handleCommentEdit=(commentId,editContent)=>{
+    setIsSubmitting(true);
+    try {
+      const socket = getSocket();
+      socket.emit("editTodoComment", {
+        todoId, editContent, teamId, userId, commentId
+      })
+    }
+    catch (err) {
+      toast.error("Failed to edit comment");
+    }
+    finally{
+      setIsSubmitting(false);
+    }
+  }
+  const handleCommentDelete = (commentId) => {
+
+      try {
+        const socket = getSocket();
+        socket.emit("deleteTodoComment", {
+          todoId: todoId,       
+          teamId: teamId,  
+          userId:userId ,
+          commentId: commentId
+        });
+      }
+      catch (err) {
+        toast.error("Failed to edit comment");
+      }
+
+    
+  };
+  
+
+
   return (
     <div className="flex flex-col space-y-4">
       <div className="text-sm text-gray-500">
@@ -97,7 +161,7 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
           Comments 
         </h2>
 
-        <CommentDetailView comments={comments} currentUserId={userId} />
+        <CommentDetailView comments={comments} currentUserId={userId} onEditComment={handleCommentEdit} onDeleteComment={handleCommentDelete} />
 
         <CommentInput
           onSubmit={handleSendComment}

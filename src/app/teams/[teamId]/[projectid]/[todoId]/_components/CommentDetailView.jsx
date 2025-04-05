@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import {  X, Check, Edit2,  Trash } from "lucide-react";
+import AlertBox from "@/app/_components/AlertBox";
 
 
 function CommentDetailView({ 
@@ -40,6 +41,10 @@ function CommentDetailView({
 
   const isCommentOwner = (comment) => {
     return currentUserId && comment.author._id === currentUserId;
+  };
+
+  const handleCommentDelte = (commentId) => {
+    onDeleteComment(commentId);
   };
 
   return (
@@ -109,14 +114,16 @@ function CommentDetailView({
                       <Edit2 size={14} />
                       <span>Edit</span>
                     </button>
+                    <AlertBox onConfirm={()=>{handleCommentDelte(comment._id)}}>
                     <button 
-                      onClick={() => onDeleteComment && onDeleteComment(comment._id)}
                       className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-400 transition-colors"
                       aria-label="Delete comment"
                     >  
                       <Trash size={14} />
                       <span>Delete</span>
                     </button>
+                    </AlertBox>
+
                   </div>
                 </div>
               )}
