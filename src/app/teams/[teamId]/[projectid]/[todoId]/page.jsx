@@ -29,7 +29,6 @@ function Page({ params }) {
       const response = await axios.get(
         `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}`
       );
-      console.log(" the data is ", response.data.data.todo);
       settododata(response.data.data.todo);
       setteammembers(response.data.data.members);
       setisAdmin(response.data.data.isAdmin);

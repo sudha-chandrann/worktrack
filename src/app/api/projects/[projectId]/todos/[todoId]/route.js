@@ -86,19 +86,19 @@ export async function PATCH(req, context) {
 
 export async function DELETE(req, context) {
   await dbConnect();
-
+  
   try {
     const userId = getDataFromToken(req);
     const { params } = context;
     const { projectId, todoId } = params;
-
+    
     if (!projectId || !todoId) {
       return NextResponse.json(
         { success: false, message: "Project ID and Todo ID are required" },
         { status: 400 }
       );
     }
-
+    
     // Fetch project with todos
     const project = await Project.findById(projectId).populate("todos").lean();
     if (!project) {
@@ -107,7 +107,7 @@ export async function DELETE(req, context) {
         { status: 404 }
       );
     }
-
+    
     // Fetch todo and validate ownership
     const todo = await Todo.findById(todoId);
     if (!todo) {
@@ -116,7 +116,7 @@ export async function DELETE(req, context) {
         { status: 404 }
       );
     }
-
+    
     // Check if user has permission (only the assigned user can delete)
     if (todo.assignedTo && todo.assignedTo.toString() !== userId) {
       return NextResponse.json(
@@ -124,7 +124,7 @@ export async function DELETE(req, context) {
         { status: 403 }
       );
     }
-
+    
     // Check if todo belongs to the project
     if (!project.todos.some((t) => t._id.toString() === todoId)) {
       return NextResponse.json(
@@ -132,19 +132,36 @@ export async function DELETE(req, context) {
         { status: 403 }
       );
     }
-
+    
+    // First, get all subtask IDs for deletion
+    const subtaskIds = todo.subtasks || [];
+    
+    // Delete comments related to subtasks
+    if (subtaskIds.length > 0) {
+      await Comment.deleteMany({
+        taskRef: { $in: subtaskIds },
+        onModel: 'Subtask'
+      });
+    }
+    
+    // Delete comments related to the todo
+    await Comment.deleteMany({
+      taskRef: todoId,
+      onModel: 'Todo'
+    });
+    
+    // Delete subtasks
+    if (subtaskIds.length > 0) {
+      await Subtask.deleteMany({ _id: { $in: subtaskIds } });
+    }
+    
+    
     // Remove todo from the project
     await Project.findByIdAndUpdate(projectId, { $pull: { todos: todoId } });
-
-    // Delete related subtasks
-    await Subtask.deleteMany({ _id: { $in: todo.subtasks } });
-
-    // Delete related comments
-    await Comment.deleteMany({ _id: { $in: todo.comments } });
-
+    
     // Delete the todo itself
     await Todo.findByIdAndDelete(todoId);
-
+    
     return NextResponse.json(
       { success: true, message: "Todo and related data deleted successfully" },
       { status: 200 }

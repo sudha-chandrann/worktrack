@@ -21,7 +21,6 @@ function Page({ params }) {
         `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}/${subtodoId}`,
       );
       setsubtaskdata(response.data.data);
-      console.log("The subtask data is", response.data.data);
     } catch (error) {
       console.error("Error fetching subtask data:", error);
       seterror(error.response?.data?.message || "Something went wrong !");

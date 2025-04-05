@@ -17,7 +17,6 @@ import DailyCountdownTimer from "./_components/TodoTimer";
 import NewTodoModal from "../inbox/_components/NewTodoModal";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import TodoCard from "./_components/TodoItem";
 import SubTaskCard from "./_components/SubtodoItem";
 
@@ -39,7 +38,6 @@ function TodayTasksPage() {
   const [subtaskSortOrder, setSubtaskSortOrder] = useState("priority");
 
   const inboxId = useSelector((state) => state.user.inbox);
-  const router = useRouter();
 
   // Create a new todo
   const handleCreateTodo = async (data) => {
@@ -123,7 +121,6 @@ function TodayTasksPage() {
     try {
       setIsLoading(true);
       const response = await axios.get("/api/users/gettodaytodos");
-      console.log(" the today respose is ", response.data.data);
       const todos = response.data.data.todos || [];
       const subtasks = response.data.data.subtasks || [];
       setSubtasks(subtasks);
@@ -221,6 +218,7 @@ function TodayTasksPage() {
   // Initial data fetch
   useEffect(() => {
     fetchTodayTodos();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Calculate task counts

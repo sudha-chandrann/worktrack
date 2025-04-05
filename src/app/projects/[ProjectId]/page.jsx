@@ -5,7 +5,15 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { ChevronLeft, Plus, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import {
+  ChevronLeft,
+  Plus,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Trash2,
+} from "lucide-react";
+import AlertBox from "../../_components/AlertBox";
 
 function Page({ params }) {
   const { ProjectId } = params;
@@ -17,18 +25,21 @@ function Page({ params }) {
   const [progressStats, setProgressStats] = useState({
     completed: 0,
     total: 0,
-    percentage: 0
+    percentage: 0,
   });
 
   const router = useRouter();
 
   const calculateProgress = (todos) => {
-    if (!todos || !todos.length) return { completed: 0, total: 0, percentage: 0 };
-    
+    if (!todos || !todos.length)
+      return { completed: 0, total: 0, percentage: 0 };
+
     const total = todos.length;
-    const completed = todos.filter(todo => todo.status === "completed").length;
+    const completed = todos.filter(
+      (todo) => todo.status === "completed"
+    ).length;
     const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
+
     return { completed, total, percentage };
   };
 
@@ -77,7 +88,6 @@ function Page({ params }) {
     try {
       setIsLoading(true);
       const response = await axios.get(`/api/projects/${ProjectId}`);
-      console.log(" this project data is ",response.data.data)
       setProject(response.data.data);
       setProgressStats(calculateProgress(response.data.data.todos));
     } catch (error) {
@@ -87,11 +97,22 @@ function Page({ params }) {
     }
   };
 
+  const handleProjectDelete = async () => {
+    try {
+      const response = await axios.delete(`/api/projects/${ProjectId}`);
+      toast.success(response.data.message || "Project deleted successfully");
+      router.push(`/dashboard/inbox`);
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
+
   useEffect(() => {
     if (ProjectId) {
       fetchProjectData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ProjectId]);
 
   if (isLoading) {
@@ -112,7 +133,7 @@ function Page({ params }) {
           </div>
           <p className="text-gray-300 mb-4">{error}</p>
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push('/dashboard/inbox')}
             className="w-full mt-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <ChevronLeft size={16} />
@@ -129,11 +150,15 @@ function Page({ params }) {
         <div className="p-6 bg-gray-800 border border-yellow-500 rounded-lg shadow-lg max-w-md w-full">
           <div className="flex items-center gap-3 mb-4">
             <AlertCircle className="text-yellow-500" size={24} />
-            <h2 className="text-yellow-400 text-xl font-semibold">Project Not Found</h2>
+            <h2 className="text-yellow-400 text-xl font-semibold">
+              Project Not Found
+            </h2>
           </div>
-          <p className="text-gray-300 mb-4">The requested project could not be found.</p>
+          <p className="text-gray-300 mb-4">
+            The requested project could not be found.
+          </p>
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push('/dashboard/inbox')}
             className="w-full mt-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <ChevronLeft size={16} />
@@ -147,21 +172,30 @@ function Page({ params }) {
   return (
     <div className="bg-gray-900 min-h-screen">
       <div className="max-w-5xl mx-auto p-6">
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push('/dashboard/inbox')}
             className="text-gray-400 hover:text-white flex items-center gap-2 transition-colors duration-200"
           >
             <ChevronLeft size={16} />
             Back to Dashboard
           </button>
+          <AlertBox onConfirm={handleProjectDelete}>
+            <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
+              <Trash2 className="w-4 h-4" />
+              Delete
+            </button>
+          </AlertBox>
         </div>
 
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 mb-8">
           <div className="flex items-center gap-6">
-            <div 
+            <div
               className="flex items-center justify-center text-4xl h-16 w-16 rounded-lg"
-              style={{ backgroundColor: project.color + '20', color: project.color }}
+              style={{
+                backgroundColor: project.color + "20",
+                color: project.color,
+              }}
             >
               {project.icon}
             </div>
@@ -187,30 +221,37 @@ function Page({ params }) {
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 mb-8">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-medium text-white">Project Progress</h3>
-            <span className="text-gray-300 font-medium">{progressStats.percentage}% Complete</span>
+            <span className="text-gray-300 font-medium">
+              {progressStats.percentage}% Complete
+            </span>
           </div>
-          
+
           <div className="w-full h-4 bg-gray-700 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full rounded-full transition-all duration-500 ease-out"
-              style={{ 
+              style={{
                 width: `${progressStats.percentage}%`,
-                backgroundColor: progressStats.percentage === 100 ? '#10B981' : '#3B82F6' 
+                backgroundColor:
+                  progressStats.percentage === 100 ? "#10B981" : "#3B82F6",
               }}
             ></div>
           </div>
-          
+
           <div className="flex justify-between mt-3">
             <div className="flex items-center gap-2 text-sm">
               <CheckCircle size={16} className="text-green-500" />
               <span className="text-gray-300">
-                <span className="font-medium">{progressStats.completed}</span> completed
+                <span className="font-medium">{progressStats.completed}</span>{" "}
+                completed
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock size={16} className="text-blue-500" />
               <span className="text-gray-300">
-                <span className="font-medium">{progressStats.total - progressStats.completed}</span> remaining
+                <span className="font-medium">
+                  {progressStats.total - progressStats.completed}
+                </span>{" "}
+                remaining
               </span>
             </div>
           </div>

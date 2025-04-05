@@ -70,7 +70,7 @@ function Login() {
       
       if (response.data.success) {
         toast.success(response.data.message);
-        router.push('/dashboard');
+        router.push('/dashboard/today');
       } else {
         toast.error(response.data.message);
       }

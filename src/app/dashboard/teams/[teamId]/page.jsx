@@ -23,7 +23,6 @@ function Page({ params }) {
     try {
       setIsLoading(true);
       const response = await axios.get(`/api/teams/${teamId}`);
-      console.log(" this team data is ", response.data.data);
       setteam(response.data.data.team);
       setIsAdmin(response.data.data.isAdmin);
     } catch (error) {

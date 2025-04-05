@@ -87,19 +87,15 @@ export default function Home() {
             <div className="md:w-1/2">
               <div className="relative rounded-xl overflow-hidden shadow-2xl border border-gray-800 transform hover:scale-[1.02] transition-transform duration-300">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-600/10 z-10"></div>
-                {/* <Image
-                  src="/dashboard-mockup.png"
+                <Image
+                  src="/dashboard.png"
                   alt="FlowTask Dashboard"
                   width={600}
                   height={400}
                   placeholder="blur"
                   blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAEggJ4YszgAAAAAElFTkSuQmCC"
                   className="w-full h-auto relative z-0"
-                /> */}
-                {/* If you don't have the image, replace with a placeholder div */}
-                <div className="bg-gradient-to-br from-gray-800 to-gray-900 aspect-video w-full rounded-xl flex items-center justify-center">
-                  <div className="text-cyan-400 text-lg">Dashboard Preview</div>
-                </div>
+                />
               </div>
             </div>
           </div>
