@@ -147,18 +147,6 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
 
   return (
     <div className="flex flex-col space-y-4">
-      <div className="text-sm text-gray-500">
-        Connection Status:{" "}
-        <span
-          className={
-            status === "connected"
-              ? "text-green-500 font-medium"
-              : "text-red-500 font-medium"
-          }
-        >
-          {status}
-        </span>
-      </div>
 
       <div className="bg-gray-800 rounded-lg shadow p-4">
         <h2 className="text-lg font-medium mb-4 text-white">

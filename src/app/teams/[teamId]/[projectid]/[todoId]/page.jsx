@@ -158,7 +158,7 @@ function Page({ params }) {
           onUpdate={handleTodoUpdate}
           onDelete={handleTodoDelete}
         />
-        <div className="mt-8 bg-gray-800 rounded-lg shadow-md p-6">
+        <div className="mt-8 bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-white">Subtasks</h3>
             {tododata.assignedTo._id === userId && (

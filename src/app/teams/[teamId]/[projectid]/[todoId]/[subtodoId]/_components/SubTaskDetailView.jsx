@@ -45,7 +45,7 @@ function SubTaskDetailView({ subtask, onUpdate, onDelete,userId }) {
   };
 
   return (
-    <div className="bg-gray-800 text-gray-100 rounded-lg shadow-md p-6">
+    <div className="bg-gray-800 text-gray-100 rounded-lg shadow-md p-6 mb-5">
       {isPastDue && <PastDueAlert />}
       {!isEditing ? (
         <>
