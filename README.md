@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# WorkTrack
 
-## Getting Started
+**WorkTrack** is a collaborative project management tool designed to help teams and individuals efficiently manage their tasks. It enables seamless project tracking, task assignment, prioritization, and real-time communication. Whether you're managing a team project or organizing personal tasks, WorkTrack makes productivity effortless.
 
-First, run the development server:
+## Features
 
+### Team Collaboration
+- Create and manage projects within a team.
+- Only team leaders can assign tasks to team members.
+- Set deadlines and prioritize tasks for better project management.
+- Team members can comment and communicate on each task and subtask.
+
+### Task Management
+- Assigned users can create subtasks to break down their work.
+- Add detailed descriptions to todos and subtodos.
+- Commenting feature available for both todos and subtodos.
+- **(Upcoming Feature)** AI-powered task description suggestions.
+
+### Personal Projects
+- Users can create personal projects to manage individual tasks outside of the team environment.
+
+## Installation
+
+To install and run WorkTrack on your local machine, follow these steps:
+
+### Clone the Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/sudha-chandrann/worktrack.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Navigate to the Project Directory
+```bash
+cd todotracker
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Set Up Environment Variables
+Create a `.env` file in the root directory and provide the following environment variables:
+```plaintext
+PORT=your_port_number
+MONGODB_URI=your_mongodb_uri
+CORS_ORIGIN=your_cors_origin
+ACCESS_TOKEN_SECRET=your_access_token_secret
+ACCESS_TOKEN_EXPIRY=your_access_token_expiry_time
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+REFRESH_TOKEN_EXPIRY=your_refresh_token_expiry_time
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Install Dependencies
+```bash
+npm install
+```
 
-## Learn More
+### Start the Development Server
+```bash
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Creating a Project
+Team leaders can create projects and assign tasks to team members.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Managing Tasks
+Once assigned, users can:
+- Create subtasks
+- Add descriptions
+- Set priorities
+- Communicate via comments
 
-## Deploy on Vercel
+### Personal Use
+Users can manage their personal projects separately from team projects.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Technologies Used
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Frontend
+- Next.js
+- Tailwind CSS
+
+### Backend
+- Next js api
+- MongoDB
+
+### Real-time Communication
+- Socket.IO
+
+### Authentication
+- JWT (JSON Web Token)
+
+## Contribution Guidelines
+We welcome contributions to improve WorkTrack! To contribute:
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-name`).
+3. Commit your changes (`git commit -m "Add new feature"`).
+4. Push to the branch (`git push origin feature-name`).
+5. Open a Pull Request.
+
+## License
+This project is licensed under the MIT License.
+
