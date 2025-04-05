@@ -33,7 +33,7 @@ function Avatar({ name,  width = 10 }) {
   const sizeClass = sizeClasses[width] || 'w-10 h-10 text-lg'
   
   const handleProfileClick = () => {
-    router.push('/profile')
+    router.push('/dashboard')
     setIsOpen(false)
   }
   
