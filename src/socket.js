@@ -5,6 +5,7 @@ let socket;
 
 export const initializeSocket = () => {
   if (!socket) {
+    console.log(" the backend_url is ",process.env.NEXT_PUBLIC_BACKEND_URL)
     socket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
       transports: ["websocket"],
     });
