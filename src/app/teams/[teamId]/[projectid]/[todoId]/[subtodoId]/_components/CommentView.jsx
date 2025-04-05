@@ -1,16 +1,16 @@
 // CommentView.jsx
 "use client";
 import React, { useEffect, useState } from "react";
-import CommentDetailView from "./CommentDetailView";
-import CommentInput from "./CommentInput";
+import CommentDetailView from "../../_components/CommentDetailView"
+import CommentInput from "../../_components/CommentInput"
 import { toast } from "react-hot-toast";
 import {
   getSocket,
   initializeSocket,
   joinRooms,
-} from "../../../../../../socket";
+} from "../../../../../../../socket";
 
-function CommentView({ comments: initialComments, userId, todoId, teamId }) {
+function CommentView({ comments: initialComments, userId, subtodoId, teamId }) {
   const [comments, setComments] = useState(initialComments || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState("connecting");
@@ -30,7 +30,7 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
     };
 
     const handleNewComment = (data) => {
-      if (data.success && data.todoId === todoId) {
+      if (data.success && data.subtodoId === subtodoId) {
         setComments((prevComments) => {
           // Check if comment already exists to prevent duplicates
           const exists = prevComments.some(
@@ -44,7 +44,7 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
       }
     };
     const handleEditComment = (data) => {
-      if (data.success && data.todoId === todoId) {
+      if (data.success && data.subtaskId === subtodoId) {
         setComments((prevComments) => {
           return prevComments.map((comment) => {
             if (comment._id === data.comment._id) {
@@ -56,7 +56,7 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
       }
     };
     const handleCommentDeleted = (data) => {
-      if (data.success && data.todoId === todoId) {
+      if (data.success && data.subtodoId === subtodoId) {
         // Remove the deleted comment from state
         setComments((prevComments) => 
           prevComments.filter(comment => comment._id !== data.commentId)
@@ -68,13 +68,13 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
 
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
-    socket.on("commenttodoAdded", handleNewComment);
-    socket.on("todoCommentEdited", handleEditComment);
-    socket.on("todoCommentDeleted", handleCommentDeleted);
-    socket.on("TodocommentEditSuccess",(data)=>{
+    socket.on("commentsubtodoAdded", handleNewComment);
+    socket.on("subtodoCommentEdited", handleEditComment);
+    socket.on("subtodoCommentDeleted", handleCommentDeleted);
+    socket.on("SubTodocommentEditSuccess",(data)=>{
       toast.success(data.message);
     })
-    socket.on("commentDeleteSuccess",(data)=>{
+    socket.on("subtodocommentDeleteSuccess",(data)=>{
       toast.success(data.message);
     })
     socket.on("error", (error) => {
@@ -84,21 +84,21 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
     return () => {
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
-      socket.off("commenttodoAdded", handleNewComment);
-      socket.off("todoCommentEdited", handleEditComment);
-      socket.off("todoCommentDeleted", handleCommentDeleted);
-      socket.off("TodocommentEditSuccess")
-      socket.off("commentDeleteSuccess")
+      socket.off("commentsubtodoAdded", handleNewComment);
+      socket.off("subtodoCommentEdited", handleEditComment);
+      socket.off("subtodoCommentDeleted", handleCommentDeleted);
+      socket.off("SubTodocommentEditSuccess")
+      socket.off("subtodocommentDeleteSuccess")
       socket.off("error");
     };
-  }, [userId, teamId, todoId]);
+  }, [userId, teamId, subtodoId]);
 
   const handleSendComment = (commentContent) => {
     setIsSubmitting(true);
     try {
       const socket = getSocket();
-      socket.emit("addCommentToTodo", {
-        todoId,
+      socket.emit("addCommentTosubTodo", {
+        subtodoId,
         comment: commentContent,
         teamId,
         userId,
@@ -114,8 +114,8 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
     setIsSubmitting(true);
     try {
       const socket = getSocket();
-      socket.emit("editTodoComment", {
-        todoId, editContent, teamId, userId, commentId
+      socket.emit("editsubTodoComment", {
+        subtodoId, editContent, teamId, userId, commentId
       })
     }
     catch (err) {
@@ -129,8 +129,8 @@ function CommentView({ comments: initialComments, userId, todoId, teamId }) {
 
       try {
         const socket = getSocket();
-        socket.emit("deleteTodoComment", {
-          todoId: todoId,       
+        socket.emit("deletesubTodoComment", {
+          subtodoId: subtodoId,       
           teamId: teamId,  
           userId:userId ,
           commentId: commentId

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import SubTaskDetailView from "./_components/SubTaskDetailView";
 import { useSelector } from "react-redux";
+import CommentView from "./_components/CommentView";
 
 function Page({ params }) {
   const { projectid, todoId, subtodoId, teamId } = params;
@@ -32,6 +33,7 @@ function Page({ params }) {
     if (todoId && projectid && subtodoId) {
       fetchTodoData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todoId, projectid, subtodoId]);
 
   const handleSubtaskUpdate = async (updatedData) => {
@@ -122,6 +124,8 @@ function Page({ params }) {
           onDelete={handleSubtaskDelete}
           userId={userId}
         />
+          <CommentView comments={subtaskdata.comments || []} userId={userId} subtodoId={subtodoId} teamId={teamId}/>
+
       </div>
     </div>
   );
