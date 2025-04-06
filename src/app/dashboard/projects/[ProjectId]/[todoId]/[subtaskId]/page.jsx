@@ -80,10 +80,10 @@ function Page({ params }) {
           <h2 className="text-red-600 text-xl font-semibold">Error</h2>
           <p className="text-red-700">{error}</p>
           <button
-            onClick={() => router.push(`/projects/${ProjectId}/${todoId}`)}
+            onClick={() => router.push(`/dashboard/projects/${ProjectId}/${todoId}`)}
             className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
           >
-            Back to Project
+            Back to Parent Task 
           </button>
         </div>
       </div>
@@ -100,10 +100,10 @@ function Page({ params }) {
             The requested task could not be found.
           </p>
           <button
-            onClick={() => router.push(`/projects/${ProjectId}/${todoId}`)}
+            onClick={() => router.push(`/dashboard/projects/${ProjectId}/${todoId}`)}
             className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
           >
-            Back to Project
+            Back to Parent Task
           </button>
         </div>
       </div>
@@ -111,14 +111,14 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-700 ">
+    <div className="bg-gray-900 ">
           <div className="max-w-5xl mx-auto p-6 bg-gray-900 min-h-screen">
       <div className="mb-4">
         <button
-          onClick={() => router.push(`/projects/${ProjectId}/${todoId}`)}
+          onClick={() => router.push(`/dashboard/projects/${ProjectId}/${todoId}`)}
           className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
         >
-          <span>←</span> Back to Todo
+          <span>←</span> Back to Parent Task
         </button>
       </div>
       <SubTaskDetailView

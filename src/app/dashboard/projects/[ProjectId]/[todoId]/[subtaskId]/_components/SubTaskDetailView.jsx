@@ -7,6 +7,8 @@ import AlertBox from "../../../../../../_components/AlertBox"
 import StatusBadge from "../../_components/StatusBadge";
 import PriorityTag from "../../_components/PriorityTag";
 import DueDate from "../../_components/DueDate";
+import SubTaskEditForm from "./SubTaskEditForm";
+import SubtaskInformationSection from "./SubtaskInformationSection";
 
 function SubTaskDetailView({ subtask, onUpdate, onDelete }) {
   const [isPastDue, setIsPastDue] = useState(false);
@@ -24,6 +26,11 @@ function SubTaskDetailView({ subtask, onUpdate, onDelete }) {
       setIsPastDue(dueDate < today && subtask.status !== "completed");
     }
   }, [subtask.dueDate, subtask.status]);
+
+  const handleSaveEdit = (formData) => {
+    onUpdate(formData);
+    setIsEditing(false);
+  };
 
 
 
@@ -102,9 +109,15 @@ function SubTaskDetailView({ subtask, onUpdate, onDelete }) {
               <p className="text-gray-500 italic">No description provided</p>
             )}
           </div>
+          <SubtaskInformationSection subtask={subtask} />
         </>
       ) : (
-        <></>
+    <SubTaskEditForm
+        subtask={subtask}
+        minDate={minDate}
+        onCancel={() => setIsEditing(false)}
+        onSubmit={handleSaveEdit}
+      />
       )}
     </div>
   );
