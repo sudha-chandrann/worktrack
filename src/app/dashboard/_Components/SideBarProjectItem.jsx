@@ -9,10 +9,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 function SideBarProjectItem({ icon, href, label }) {
   const pathname = usePathname();
-  const isActive = pathname === `/projects/${href}/` || pathname.startsWith(`/projects/${href}/`);
+  const isActive = pathname === `/dashboard/projects/${href}/` || pathname.startsWith(`/dashboard/projects/${href}/`);
   return (
     <Link
-      href={`/projects/${href}/`}
+      href={`/dashboard/projects/${href}/`}
       className={cn(
         "flex items-center gap-3 px-4 py-3 rounded-md transition-colors duration-200",
         isActive
