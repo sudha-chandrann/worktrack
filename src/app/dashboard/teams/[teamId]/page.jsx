@@ -5,6 +5,7 @@ import { AlertCircle, Plus, UserPlus, Users } from "lucide-react";
 import toast from "react-hot-toast";
 import { Button } from "../../../../components/ui/button";
 import MemberCard from "../_components/MemberCard";
+import AddMemberModal from "../_components/AddMemberModal";
 
 function Page({ params }) {
   const { teamId } = params;
@@ -146,7 +147,13 @@ function Page({ params }) {
 
           </div>
         </div>
-
+        {addMemberModalOpen && (
+          <AddMemberModal
+            isOpen={addMemberModalOpen}
+            onClose={() => setAddMemberModalOpen(false)}
+            teamId={teamId}
+          />
+        )}
 
 
       </div>
