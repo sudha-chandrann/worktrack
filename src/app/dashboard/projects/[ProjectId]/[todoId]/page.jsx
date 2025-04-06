@@ -14,6 +14,7 @@ function Page({ params }) {
   const [error, seterror] = useState(null);
   const [isSubmitting, setisSubmitting] = useState(false);
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
+  const [isEditingSubtask, setIsEditingSubtask] = useState(false);
   const router = useRouter();
 
   const fetchTodoData = async () => {
@@ -49,7 +50,7 @@ function Page({ params }) {
     if (todoId && ProjectId) {
       fetchTodoData();
     }
-  }, [todoId, ProjectId]);
+  }, [todoId, ProjectId,isEditingSubtask]);
 
   const handleTodoUpdate = async (updatedData) => {
     try {
@@ -86,6 +87,7 @@ function Page({ params }) {
         subtaskData
       );
       toast.success(response.data.message || "Subtask is added Successfully");
+      setIsAddingSubtask(false)
       fetchTodoData();
     } catch (err) {
       console.error("Error adding subtask:", err);
@@ -142,7 +144,7 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-700 ">
+    <div className="bg-gray-900 ">
     <div className="max-w-5xl mx-auto p-6 bg-gray-900 min-h-screen">
       <div className="mb-4">
         <button
@@ -184,6 +186,7 @@ function Page({ params }) {
           subtasks={tododata.subtasks || []}
           projectId={ProjectId}
           todoId={todoId}
+          setIsEditingSubtask={setIsEditingSubtask}
         />
       </div>
     </div>

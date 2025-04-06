@@ -3,7 +3,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import SubtaskItem from './SubtaskItem';
 
-const SubtaskList = ({ subtasks,projectId,todoId }) => {
+const SubtaskList = ({ subtasks,projectId,todoId,setIsEditingSubtask }) => {
   if (!subtasks || subtasks.length === 0) {
     return (
       <div className="text-center py-6 text-gray-500">
@@ -17,6 +17,7 @@ const SubtaskList = ({ subtasks,projectId,todoId }) => {
       if(response.data.success){
         toast.success(response.data.message||" Subtask is updated successfully");
       }
+      setIsEditingSubtask((prev)=>!prev)
     } catch (err) {
       console.error('Error updating subtask:', err);
       toast.error(err.response?.data?.message||"Something went wrong")
@@ -29,6 +30,8 @@ const SubtaskList = ({ subtasks,projectId,todoId }) => {
       if(response.data.success){
         toast.success(response.data.message||" Subtask is updated successfully");
       }
+      setIsEditingSubtask((prev)=>!prev)
+
     } catch (err) {
       console.error('Error deleting subtask:', err);
       toast.error(err.response?.data?.message||"Something went wrong")
