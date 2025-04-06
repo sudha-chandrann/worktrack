@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import { Button } from "../../../../components/ui/button";
 import MemberCard from "../_components/MemberCard";
 import AddMemberModal from "../_components/AddMemberModal";
+import AddProjectModal from "../_components/AddProjectModal";
+import ProjectCard from "../_components/ProjectCard";
 
 function Page({ params }) {
   const { teamId } = params;
@@ -16,7 +18,7 @@ function Page({ params }) {
   const [isSubmitting, setisSubmitting] = useState(false);
   const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
   const [addProjectModalOpen, setAddProjectModalOpen] = useState(false);
-  const [isEditing,setisEditing]=useState(false);
+  const [isEditing, setisEditing] = useState(false);
   const fetchTeamData = async () => {
     try {
       setIsLoading(true);
@@ -33,13 +35,19 @@ function Page({ params }) {
   const handleAddProject = async (projectData) => {
     try {
       setisSubmitting(true);
-      const response = await axios.post(`/api/teams/${teamId}/projects`, projectData);
+      const response = await axios.post(
+        `/api/teams/${teamId}/projects`,
+        projectData
+      );
       toast.success(
         response.data.message || " new Project is Created Successfully"
       );
-      fetchTeamData()
+      fetchTeamData();
+      setAddProjectModalOpen(false);
     } catch (err) {
-      toast.error(err.response?.data.message || "something went wrong during creating project  !");
+      
+      toast.error(err.message || "Something went wrong!");
+      console.log(" the error during creating project is ",err)
     } finally {
       setisSubmitting(false);
     }
@@ -50,7 +58,7 @@ function Page({ params }) {
       fetchTeamData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teamId,isEditing]);
+  }, [teamId, isEditing]);
 
   if (isLoading) {
     return (
@@ -124,8 +132,8 @@ function Page({ params }) {
           )}
         </div>
         <div className=" w-full">
-          <p className="text-white">Members</p>
-          <div className="flex flex-col gap-2">
+          <p className="text-white mb-4">Members</p>
+          <div className="flex flex-col gap-4">
             {team?.members?.length > 0 ? (
               team.members.map((member) => (
                 <MemberCard
@@ -142,9 +150,17 @@ function Page({ params }) {
           </div>
         </div>
         <div className=" w-full mt-5">
-          <p className="text-white">Projects</p>
-          <div className="flex flex-col gap-2">
-
+          <p className="text-white mb-4">Projects</p>
+          <div className="flex flex-col gap-4">
+          {team?.projects?.length > 0 ? (
+              team.projects.map((project) => (
+                <ProjectCard key={project._id} project={project} teamId={teamId}/>
+              ))
+            ) : (
+              <p className="text-gray-400 text-center mt-6 ">
+                No Projects found.
+              </p>
+            )}
           </div>
         </div>
         {addMemberModalOpen && (
@@ -155,7 +171,13 @@ function Page({ params }) {
           />
         )}
 
-
+        {addProjectModalOpen && (
+          <AddProjectModal
+            onSubmit={handleAddProject}
+            onclose={() => setAddProjectModalOpen(false)}
+            isSubmitting={isSubmitting}
+          />
+        )}
       </div>
     </div>
   );
