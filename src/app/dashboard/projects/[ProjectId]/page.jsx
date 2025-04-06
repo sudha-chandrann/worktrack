@@ -14,6 +14,8 @@ import {
   Trash2,
 } from "lucide-react";
 import AlertBox from "../../../_components/AlertBox"
+import { useDispatch, useSelector } from "react-redux";
+import { removeProject } from "../../../../store/userSlice";
 
 function Page({ params }) {
   const { ProjectId } = params;
@@ -29,6 +31,8 @@ function Page({ params }) {
   });
 
   const router = useRouter();
+  const dispatch= useDispatch();
+  const inboxId= useSelector((state)=>state.user.inbox);
 
   const calculateProgress = (todos) => {
     if (!todos || !todos.length)
@@ -101,6 +105,7 @@ function Page({ params }) {
     try {
       const response = await axios.delete(`/api/projects/${ProjectId}`);
       toast.success(response.data.message || "Project deleted successfully");
+      dispatch(removeProject(response.data.data))
       router.push(`/dashboard/inbox`);
     } catch (error) {
       console.error("Error deleting project:", error);
@@ -133,11 +138,11 @@ function Page({ params }) {
           </div>
           <p className="text-gray-300 mb-4">{error}</p>
           <button
-            onClick={() => router.push('/dashboard/inbox')}
+            onClick={() => router.push('/dashboard/today')}
             className="w-full mt-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <ChevronLeft size={16} />
-            Back to Projects
+            Back to Dashboard
           </button>
         </div>
       </div>
@@ -158,7 +163,7 @@ function Page({ params }) {
             The requested project could not be found.
           </p>
           <button
-            onClick={() => router.push('/dashboard/inbox')}
+            onClick={() => router.push('/dashboard/today')}
             className="w-full mt-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <ChevronLeft size={16} />
@@ -174,18 +179,23 @@ function Page({ params }) {
       <div className="max-w-5xl mx-auto p-6">
         <div className="mb-6 flex items-center justify-between">
           <button
-            onClick={() => router.push('/dashboard/inbox')}
+            onClick={() => router.push('/dashboard/today')}
             className="text-gray-400 hover:text-white flex items-center gap-2 transition-colors duration-200"
           >
             <ChevronLeft size={16} />
             Back to Dashboard
           </button>
-          <AlertBox onConfirm={handleProjectDelete}>
-            <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </button>
-          </AlertBox>
+          {
+            inboxId !== ProjectId && (
+             <AlertBox onConfirm={handleProjectDelete}>
+                <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
+                  <Trash2 className="w-4 h-4" />
+                  Delete
+                </button>
+              </AlertBox>
+            )
+          }
+
         </div>
 
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 mb-8">

@@ -35,19 +35,22 @@ const UserSlice = createSlice({
       state.inbox='';
       state._id=null;
     },
-    setProjects: (state, action) => {
-        state.projects = action.payload;
-    },
     addProject: (state, action) => {
       state.projects.push(action.payload);
     },
+    addteams: (state, action) => {
+      state.teams.push(action.payload);
+    },
     removeProject: (state, action) => {
       state.projects = state.projects.filter(project => project._id !== action.payload);
+    },
+    removeTeam: (state, action) => {
+      state.teams = state.teams.filter(team => team._id !== action.payload);
     }
   },
 });
 
-export const { login, authlogout ,setProjects,addProject,removeProject} = UserSlice.actions;
+export const { login, authlogout ,addProject,removeProject,addteams,removeTeam} = UserSlice.actions;
 export default UserSlice.reducer;
 
 

@@ -209,6 +209,7 @@ export async function DELETE(req, context) {
       return NextResponse.json(
         {
           success: true,
+          data:projectId,
           message: "Project and all associated data deleted successfully"
         },
         { status: 200 }
