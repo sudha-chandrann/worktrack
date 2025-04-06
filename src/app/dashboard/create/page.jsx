@@ -13,7 +13,7 @@ function Page() {
             setisSubmitting(true);
             const response= await axios.post(`/api/projects`,data);
             toast.success(response.data.message||" new Project is Created Successfully");
-            router.push(`/projects/${response.data.data.projectId}`)
+            router.push(`/dashboard/projects/${response.data.data.projectId}`)
         }
         catch(err){
             toast.error(err.response?.data.message||"something went wrong !");
