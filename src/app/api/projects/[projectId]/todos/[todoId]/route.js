@@ -175,5 +175,188 @@ export async function DELETE(req, context) {
   }
 }
 
+export async function GET(req, context) {
+    await dbConnect();
+  
+    try {
+      const id = getDataFromToken(req);
+      const { params } = context;
+      const projectId = params.projectId;
+      const todoId = params.todoId;
+  
+      if (!projectId) {
+        return NextResponse.json(
+          {
+            data: null,
+            error: "Project ID is required",
+            success: false,
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+      const project = await Project.findById(projectId);
+  
+      if (!project) {
+        return NextResponse.json(
+          {
+            data: null,
+            message: "Project not found",
+            success: false,
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+  
+      const todo = await Todo.findById(todoId)
+        .populate("assignedTo", "username fullName")
+        .populate("assignedBy", "username fullName")
+        .populate("project", "name description icon color")
+        .populate({
+          path: "subtasks",
+          populate: {
+            path: "assignedTo",
+            select: "username fullName",
+          },
+        })
+        .populate({
+          path: "comments",
+          populate: {
+            path: "author",
+            select: "username fullName",
+          },
+        });
+      if (!todo) {
+        return NextResponse.json(
+          { data: null, success: false, message: "Todo not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(
+        {
+          success: true,
+          message: " Todo is found  successfully",
+          data: todo,
+        },
+        {
+          status: 200,
+        }
+      );
+    } catch (error) {
+      console.error("Error geting todo:", error);
+      return NextResponse.json(
+        {
+          success: false,
+          message: error.message || "Internal server error",
+          data: null,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+  }
 
-
+  export async function POST(req, context) {
+    await dbConnect();
+  
+    try {
+      const id = getDataFromToken(req);
+      const { title, description, priority, dueDate, status,parentTask } = await req.json();
+      const { params } = context;
+      const projectId = params.projectId;
+      const todoId=params.todoId;
+  
+      if (!projectId) {
+        return NextResponse.json(
+          {
+            data: null,
+            error: "Project ID is required",
+            success: false,
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+      const project = await Project.findById(projectId);
+      if (!project) {
+          return NextResponse.json(
+              {
+                  data: null,
+                  message: "Project not found",
+                  success: false,
+              },
+              {
+                  status: 404,
+              }
+          )
+      }
+      const todo= await Todo.findById(todoId);
+      if (!todo) {
+        return NextResponse.json(
+            {
+                data: null,
+                message: "todo not found",
+                success: false,
+            },
+            {
+                status: 404,
+            }
+        )
+    }
+  
+      if ([title, description, priority, dueDate].some((field) => !field)) {
+        return NextResponse.json(
+          {
+            data: null,
+            error: "all fields are required",
+            success: false,
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+  
+      const newsubtask = await Subtask.create({
+        title,
+        description,
+        priority: priority || "medium",
+        dueDate: dueDate || null,
+        parentTask:parentTask||todoId,
+        assignedTo: id,
+        status: status||"to-do",
+      });
+  
+      await Todo.findByIdAndUpdate(todoId, {
+        $push: { subtasks: newsubtask._id },
+      });
+  
+      return NextResponse.json(
+        {
+          success:true,
+          message:"new Subtask is Created successfully",
+          data:newsubtask
+        },
+        {
+          status:200
+        }
+      );
+    } catch (error) {
+      console.error('Error creating Subtask:', error);
+      return NextResponse.json({
+        success: false,
+        message: error.message||'Internal server error',
+        data: null
+      },
+      {
+          status:500
+      }
+  );
+    }
+  }
+  
