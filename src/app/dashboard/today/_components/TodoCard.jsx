@@ -300,7 +300,7 @@ const TodoCard = ({ todo, onUpdate, onDelete }) => {
 
                   <DropdownMenuLabel
                     onClick={() => {
-                      router.push(`/projects/${todo.project._id}/${todo._id}/`);
+                      router.push(`/dashboard/projects/${todo.project._id}/${todo._id}/`);
                     }}
                     className="flex items-center gap-3 p-3 hover:bg-gray-700 cursor-pointer transition-colors duration-150"
                   >

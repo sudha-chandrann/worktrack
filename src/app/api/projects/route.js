@@ -60,7 +60,7 @@ export async function POST(req) {
       {
         success: true,
         message: "Project created successfully.",
-        data: { projectId: newProject._id },
+        data: newProject,
       },
       { status: 201 }
     );

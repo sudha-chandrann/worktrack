@@ -277,7 +277,7 @@ const SubTaskCard = ({ subtask, onUpdate, onDelete }) => {
 
                   <DropdownMenuLabel
                     onClick={() => {
-                      router.push(`/projects/${subtask.parentTask.project}/${subtask.parentTask._id}/${subtask._id}`);
+                      router.push(`/dashboard/projects/${subtask.parentTask.project}/${subtask.parentTask._id}/${subtask._id}`);
                     }}
                     className="flex items-center gap-3 p-3 hover:bg-gray-700 cursor-pointer transition-colors duration-150"
                   >

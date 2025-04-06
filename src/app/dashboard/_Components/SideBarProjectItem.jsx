@@ -9,7 +9,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 function SideBarProjectItem({ icon, href, label }) {
   const pathname = usePathname();
-  const isActive = pathname === `/dashboard/projects/${href}/` || pathname.startsWith(`/dashboard/projects/${href}/`);
+  const projectPath = `/dashboard/projects/${href}`;
+  const isActive = pathname ===projectPath  || pathname.startsWith(projectPath);
   return (
     <Link
       href={`/dashboard/projects/${href}/`}
