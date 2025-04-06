@@ -86,7 +86,8 @@ const Register = () => {
       const response = await axios.post('/api/users/signup', { email, username, password ,fullName});
       if (response.data.success) {
         toast.success(response.data.message);
-        router.push('/login');
+        console.log(response.data.data)
+        // router.push('/login');
       } else {
         toast.error(response.data.message);
       }
