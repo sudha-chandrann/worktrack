@@ -4,7 +4,8 @@ import { PlusIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux'
-import NewTodoModal from "./_components/NewTodoModal"
+import NewTodoModal from "./_components/NewTodoModal";
+import TodoCard from "./_components/TodoCard";
 
 function Page() {
   const inboxid=useSelector((state)=>state.user.inbox);
@@ -163,7 +164,14 @@ function Page() {
                     {group}
                   </h2>
                   <div className="space-y-2">
-
+                    {groupedTodos[group].map(todo => (
+                      <TodoCard
+                        key={todo._id}
+                        todo={todo}
+                        onUpdate={handleUpdateTodo}
+                        onDelete={handleDeleteTodo}
+                      />
+                    ))}
                   </div>
                   </div>
                  )
