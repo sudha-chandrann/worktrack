@@ -12,25 +12,20 @@ const dancingScript = Dancing_Script({
   subsets: ['latin'],
 });
 
-const Register = () => {
+function Login() {
   const router = useRouter();
   
   // Form state management
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: '',
-    confirmPassword: '',
-    fullName:''
+    password: ''
   });
   
-  // Password visibility toggles
-  const [passwordVisibility, setPasswordVisibility] = useState({
-    password: false,
-    confirmPassword: false
-  });
+  // Password visibility toggle
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   
-  // Loading state for the submit button
+  // Loading state for submit button
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle input changes
@@ -43,30 +38,16 @@ const Register = () => {
   };
 
   // Toggle password visibility
-  const toggleVisibility = (field) => {
-    setPasswordVisibility(prev => ({
-      ...prev,
-      [field]: !prev[field]
-    }));
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
   // Validate form inputs
   const validateForm = () => {
-    const { username, email, password, confirmPassword ,fullName} = formData;
+    const { username, email, password } = formData;
     
-    if (!username || !email || !password || !confirmPassword || !fullName) {
-      toast.error("Please fill all the fields");
-      return false;
-    }
-    
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return false;
-    }
-    
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      toast.error("Please enter a valid email");
+    if ((!username && !email) || !password) {
+      toast.error("Please provide either username or email, and password");
       return false;
     }
     
@@ -74,7 +55,7 @@ const Register = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) return;
@@ -82,61 +63,48 @@ const Register = () => {
     setIsSubmitting(true);
     
     try {
-      const { username, email, password,fullName } = formData;
-      const response = await axios.post('/api/users/signup', { email, username, password ,fullName});
+      const { username, email, password } = formData;
+      const response = await axios.post('/api/users/signin', {
+        username, email, password
+      });
+      
       if (response.data.success) {
         toast.success(response.data.message);
-        router.push('/login');
+        router.push('/dashboard/today');
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Registration failed. Please try again.");
-      console.error("Registration error:", error);
+      toast.error(error.response?.data?.message || "Login failed. Please check your credentials.");
+      console.error("Login error:", error);
     } finally {
       setIsSubmitting(false);
       setFormData({
         username: '',
         email: '',
-        password: '',
-        confirmPassword: ''
+        password: ''
       });
     }
   };
 
   return (
     <main className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-black flex justify-center items-center px-4 py-8">
-      <div 
-        className="w-full max-w-md backdrop-blur-lg bg-black/40 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden opacity-0 animate-fadeIn"
-        style={{ animation: 'fadeIn 0.5s forwards' }}
-      >
+      <div className="w-full max-w-md backdrop-blur-lg bg-black/40 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden opacity-0 animate-fadeIn">
         <div className="p-8">
           <div className="text-center mb-8">
-            <h1 className={`text-4xl ${dancingScript.className} font-bold text-white mb-2`}>Create Account</h1>
+            <h1 className={`text-4xl ${dancingScript.className} font-bold text-white mb-2`}>Welcome Back</h1>
             <p className="text-gray-400 text-sm">
-              Already have an account?{" "}
+              Don&lsquo;t have an account?{" "}
               <span 
                 className="text-cyan-500 hover:text-cyan-400 cursor-pointer transition-colors duration-200"
-                onClick={() => router.push("/login")}
+                onClick={() => router.push("/register")}
               >
-                Sign In
+                Sign Up
               </span>
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
-          <div className="space-y-1">
-              <label htmlFor="fullName" className="text-sm font-medium text-gray-300">fullName</label>
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                value={formData.fullName}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-gray-900/80 border border-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your fullName"
-              />
-            </div>
+          <form className="space-y-5" onSubmit={handleLogin}>
             <div className="space-y-1">
               <label htmlFor="username" className="text-sm font-medium text-gray-300">Username</label>
               <input
@@ -161,6 +129,7 @@ const Register = () => {
                 className="w-full px-4 py-3 rounded-lg bg-gray-900/80 border border-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-all duration-200"
                 placeholder="Enter your email"
               />
+              <p className="text-xs text-gray-500 mt-1">Enter either username or email</p>
             </div>
             
             <div className="space-y-1">
@@ -169,42 +138,32 @@ const Register = () => {
                 <input
                   id="password"
                   name="password"
-                  type={passwordVisibility.password ? "text" : "password"}
+                  type={isPasswordVisible ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg bg-gray-900/80 border border-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-all duration-200"
-                  placeholder="Create a password"
+                  placeholder="Enter your password"
                 />
                 <button
                   type="button"
-                  onClick={() => toggleVisibility('password')}
+                  onClick={togglePasswordVisibility}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
                 >
-                  {passwordVisibility.password ? <FaEye className="text-xl" /> : <FaEyeSlash className="text-xl" />}
+                  {isPasswordVisible ? 
+                    <FaEye className="text-xl" /> : 
+                    <FaEyeSlash className="text-xl" />
+                  }
                 </button>
               </div>
             </div>
             
-            <div className="space-y-1">
-              <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-300">Confirm Password</label>
-              <div className="relative">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={passwordVisibility.confirmPassword ? "text" : "password"}
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-900/80 border border-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent transition-all duration-200"
-                  placeholder="Confirm your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => toggleVisibility('confirmPassword')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
-                >
-                  {passwordVisibility.confirmPassword ? <FaEye className="text-xl" /> : <FaEyeSlash className="text-xl" />}
-                </button>
-              </div>
+            <div className="flex justify-end">
+              <span 
+                className="text-cyan-500 hover:text-cyan-400 text-sm cursor-pointer transition-colors duration-200"
+                onClick={() => router.push("/recoverpassword")}
+              >
+                Forgot Password?
+              </span>
             </div>
             
             <button
@@ -212,27 +171,26 @@ const Register = () => {
               disabled={isSubmitting}
               className={`w-full py-3 px-4 rounded-lg bg-gradient-to-r from-cyan-700 to-cyan-600 hover:from-cyan-600 hover:to-cyan-500 text-white font-medium shadow-lg transition-all duration-300 hover:translate-y-[-2px] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              {isSubmitting ? "Creating Account..." : "Create Account"}
+              {isSubmitting ? "Signing In..." : "Sign In"}
             </button>
           </form>
           
-          <div className="mt-8 pt-6 border-t border-gray-800 text-center">
-            <p className="text-xs text-gray-500">
-              By signing up, you agree to our Terms of Service and Privacy Policy
-            </p>
-          </div>
+
         </div>
       </div>
       
-      {/* Add animation keyframes to your global CSS or inline here */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.5s forwards;
+        }
       `}</style>
     </main>
   );
-};
+}
 
-export default Register;
+export default Login;
