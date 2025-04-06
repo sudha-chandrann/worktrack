@@ -163,3 +163,67 @@ export async function DELETE(req, context) {
   }
 }
 
+export async function GET(req, context) {
+    await dbConnect();
+  
+    try {
+      const id = getDataFromToken(req);
+      const { params } = context;
+      const todoId = params.todoId;
+      const subtaskId= params.subtaskId;
+  
+      const todo = await Todo.findById(todoId);
+  
+      if (!todo) {
+        return NextResponse.json(
+          {
+            data: null,
+            message: "todo not found",
+            success: false,
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+  
+      const subtask = await Subtask.findById(subtaskId)
+        .populate("assignedTo", "username fullName")
+        .populate("parentTask", "title status priority dueDate")
+        .populate({
+          path: "comments",
+          populate: {
+            path: "author",
+            select: "username fullName",
+          },
+        });
+      if (!subtask) {
+        return NextResponse.json(
+          { data: null, success: false, message: "Todo not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(
+        {
+          success: true,
+          message: " subtask is found  successfully",
+          data: subtask,
+        },
+        {
+          status: 200,
+        }
+      );
+    } catch (error) {
+      console.error("Error geting subtask:", error);
+      return NextResponse.json(
+        {
+          success: false,
+          message: error.message || "Internal server error",
+          data: null,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+ }
