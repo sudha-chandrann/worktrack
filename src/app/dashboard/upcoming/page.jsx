@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import axios from "axios";
@@ -7,19 +6,52 @@ import {
   CheckCircle2,
   Circle,
   Clock,
+  PlusIcon,
   XOctagon,
+  FilterIcon,
+  SortAscIcon,
 } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
+import toast from "react-hot-toast";
+import TodoCard from "../today/_components/TodoCard"
 
 
 function UpcomingTasksPage() {
   // State management
   const [todosData, setTodosData] = useState([]);
+  const [filteredTodos, setFilteredTodos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState("priority");
 
 
+  const applyFiltersAndSort = useCallback((todos, filter, sort) => {
+    let filtered = [...todos];
+
+    // Apply status filter
+    if (filter !== "all") {
+      filtered = filtered.filter((todo) => todo.status === filter);
+    }
+
+    // Apply sorting
+    if (sort === "priority") {
+      const priorityOrder = { high: 1, medium: 2, low: 3 };
+      filtered.sort(
+        (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
+      );
+    } else if (sort === "dueDate") {
+      filtered.sort((a, b) => {
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      });
+    }
+
+    setFilteredTodos(filtered);
+  }, []);
 
 
   const fetchUpcomingTodos = useCallback(async () => {
@@ -28,23 +60,73 @@ function UpcomingTasksPage() {
       const response = await axios.get("/api/users/getupcomingtodos");
       const todos = Array.isArray(response.data.data) ? response.data.data : [];
       setTodosData(todos);
+      applyFiltersAndSort(todos, activeFilter, sortOrder);
     } catch (err) {
       console.error("Fetch upcoming todos error:", err);
       setError("Failed to load upcoming tasks. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  }, [ ]);
+  }, [ applyFiltersAndSort, activeFilter, sortOrder]);
 
+// Updates a todo
+  const handleUpdateTodo = async (projectId, todoId, updateData) => {
+    try {
+      setIsSubmitting(true);
+      const response = await axios.patch(
+        `/api/projects/${projectId}/todos/${todoId}`,
+        updateData
+      );
+      toast.success(response.data.message || "Task updated successfully");
+      fetchUpcomingTodos();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update task");
+      console.error("Update todo error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
+//  Deletes a todo
+  const handleDeleteTodo = async (projectId, todoId) => {
+    try {
+      setIsSubmitting(true);
+      const response = await axios.delete(
+        `/api/projects/${projectId}/todos/${todoId}`
+      );
+      toast.success(response.data.message || "Task deleted successfully");
+      fetchUpcomingTodos();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to delete task");
+      console.error("Delete todo error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
+//  Handles filter change
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+    applyFiltersAndSort(todosData, filter, sortOrder);
+  };
+
+  const handleSortChange = (sort) => {
+    setSortOrder(sort);
+    applyFiltersAndSort(todosData, activeFilter, sort);
+  };
 
   // Initial data fetch
   useEffect(() => {
     fetchUpcomingTodos();
-  }, []);
+  }, [fetchUpcomingTodos]);
 
-  
+  // Calculate task counts
+  const todoCountByStatus = Array.isArray(todosData) 
+    ? todosData.reduce((acc, todo) => {
+        acc[todo.status] = (acc[todo.status] || 0) + 1;
+        return acc;
+      }, {})
+    : {};
 
   // Loading state
   if (isLoading) {
@@ -138,9 +220,106 @@ function UpcomingTasksPage() {
           </div>
         </div>
         
+        {/* Action bar */}
+        <div className="flex flex-wrap items-center justify-center gap-4 bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Filters */}
+            <div className="flex items-center gap-2">
+              <FilterIcon className="h-4 w-4 text-gray-400" />
+              <div className="flex  flex-wrap  bg-gray-700 rounded-lg">
+                <button
+                  onClick={() => handleFilterChange("all")}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-l-lg transition-colors ${
+                    activeFilter === "all"
+                      ? "bg-indigo-600 text-white"
+                      : "text-gray-300 hover:bg-gray-600"
+                  }`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => handleFilterChange("to-do")}
+                  className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                    activeFilter === "to-do"
+                      ? "bg-indigo-600 text-white"
+                      : "text-gray-300 hover:bg-gray-600"
+                  }`}
+                >
+                  To-do
+                </button>
+                <button
+                  onClick={() => handleFilterChange("in-progress")}
+                  className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                    activeFilter === "in-progress"
+                      ? "bg-indigo-600 text-white"
+                      : "text-gray-300 hover:bg-gray-600"
+                  }`}
+                >
+                  In Progress
+                </button>
+                <button
+                  onClick={() => handleFilterChange("completed")}
+                  className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                    activeFilter === "completed"
+                      ? "bg-indigo-600 text-white"
+                      : "text-gray-300 hover:bg-gray-600"
+                  }`}
+                >
+                  Completed
+                </button>
+                <button
+                  onClick={() => handleFilterChange("blocked")}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-r-lg transition-colors ${
+                    activeFilter === "blocked"
+                      ? "bg-indigo-600 text-white"
+                      : "text-gray-300 hover:bg-gray-600"
+                  }`}
+                >
+                  Blocked
+                </button>
+              </div>
+            </div>
 
+            {/* Sort */}
+            <div className="flex items-center gap-2 ml-4">
+              <SortAscIcon className="h-4 w-4 text-gray-400" />
+              <select
+                value={sortOrder}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className="bg-gray-700 text-gray-300 text-sm rounded-lg px-3 py-1.5 border-none focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              >
+                <option value="priority">Priority</option>
+                <option value="dueDate">Due Date</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-
+        {/* Task list */}
+        <div className="space-y-3 mt-4">
+          {filteredTodos.length > 0 ? (
+            filteredTodos.map((todo) => (
+              <TodoCard
+                key={todo._id}
+                todo={todo}
+                onUpdate={handleUpdateTodo}
+                onDelete={handleDeleteTodo}
+                disabled={isSubmitting}
+              />
+            ))
+          ) : (
+            <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700 text-center">
+              <p className="text-gray-300">No tasks match your current filters</p>
+              <button
+                onClick={() => handleFilterChange("all")}
+                className="mt-2 text-indigo-400 hover:text-indigo-300 transition-colors"
+                disabled={isSubmitting}
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
