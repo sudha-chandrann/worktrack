@@ -86,7 +86,7 @@ export async function POST(req, context) {
       {
         success: true,
         message: "Project created successfully and added to the team.",
-        data: { projectId: newProject._id },
+        data: newProject,
       },
       { status: 201 }
     );
