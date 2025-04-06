@@ -12,13 +12,17 @@ const dbConnect = async () => {
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGODB_URI, {
-      dbName: 'worktrack', 
-      bufferCommands: false,
-    })
+    const db = await mongoose.connect(process.env.MONGODB_URI)
+    isConnected = mongoose.connection.readyState === 1;
+    mongoose.connection.on('connected', () => {
+      console.log('Connected to MongoDB');
+    });
 
-    isConnected = true
-    console.log('DB connected')
+
+    mongoose.connection.on('disconnected', () => {
+      isConnected = false;
+    });
+
   } catch (err) {
     console.error('DB connection error:', err)
     throw err
