@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../../store/userSlice"
 import Sidebar from "./_Components/SideBar";
+import Navbar from "./_Components/Navbar";
 
 
 export default function RootLayout({ children }) {
@@ -41,7 +42,7 @@ export default function RootLayout({ children }) {
   return (
       <div className="h-screen flex">
         <div className="h-[60px] md:pl-56 lg:pl-64 fixed insert-y-0 w-full bg-white z-50">
-          {/* <Navbar/> */}
+          <Navbar/>
         </div>
         <div className="hidden md:flex w-56 lg:w-64 h-full flex-col fixed insert-y-0 z-50 ">
           <Sidebar/>
