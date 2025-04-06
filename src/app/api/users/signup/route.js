@@ -1,6 +1,5 @@
-// src/pages/api/users/register.js
 import dbConnect from "../../../../lib/dbconnect"
-// import { User ,Project} from "../../../../models/user.model"
+import { User ,Project} from "../../../../models/user.model"
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -13,93 +12,93 @@ export async function POST(req) {
     const trimmedfullName = fullName?.trim();
 
     // Validate input fields
-    // if (
-    //   [trimmedEmail, trimmedUsername, trimmedPassword, trimmedfullName].some(
-    //     (field) => !field
-    //   )
-    // ) {
-    //   return NextResponse.json(
-    //     { success: false, data: null, message: "All fields are required" },
-    //     { status: 400 }
-    //   );
-    // }
+    if (
+      [trimmedEmail, trimmedUsername, trimmedPassword, trimmedfullName].some(
+        (field) => !field
+      )
+    ) {
+      return NextResponse.json(
+        { success: false, data: null, message: "All fields are required" },
+        { status: 400 }
+      );
+    }
 
     // Email format validation
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(trimmedEmail)) {
-    //   return NextResponse.json(
-    //     {
-    //       success: false,
-    //       data: null,
-    //       message: "Please provide a valid email address",
-    //     },
-    //     { status: 400 }
-    //   );
-    // }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      return NextResponse.json(
+        {
+          success: false,
+          data: null,
+          message: "Please provide a valid email address",
+        },
+        { status: 400 }
+      );
+    }
 
     // Password strength validation
-    // if (trimmedPassword.length < 8) {
-    //   return NextResponse.json(
-    //     {
-    //       success: false,
-    //       data: null,
-    //       message: "Password must be at least 8 characters long",
-    //     },
+    if (trimmedPassword.length < 8) {
+      return NextResponse.json(
+        {
+          success: false,
+          data: null,
+          message: "Password must be at least 8 characters long",
+        },
 
-    //     { status: 400 }
-    //   );
-    // }
+        { status: 400 }
+      );
+    }
 
     // Check for existing users
-    // const existingUser = await User.findOne({
-    //   $or: [{ email: trimmedEmail }, { username: trimmedUsername }],
-    // });
+    const existingUser = await User.findOne({
+      $or: [{ email: trimmedEmail }, { username: trimmedUsername }],
+    });
 
-    // if (existingUser) {
-    //   return NextResponse.json(
-    //     {
-    //       success: false,
-    //       data: null,
-    //       message: "User with same email or username already exists",
-    //     },
-    //     { status: 409 }
-    //   );
-    // }
+    if (existingUser) {
+      return NextResponse.json(
+        {
+          success: false,
+          data: null,
+          message: "User with same email or username already exists",
+        },
+        { status: 409 }
+      );
+    }
 
     // Create user
-    // const user = await User.create({
-    //   email: trimmedEmail,
-    //   username: trimmedUsername,
-    //   password: trimmedPassword,
-    //   fullName: trimmedfullName,
-    // });
+    const user = await User.create({
+      email: trimmedEmail,
+      username: trimmedUsername,
+      password: trimmedPassword,
+      fullName: trimmedfullName,
+    });
 
-    // if (!user) {
-    //   return NextResponse.json(
-    //     { success: false, data: null, message: "Failed to create new user" },
-    //     { status: 500 }
-    //   );
-    // }
-    // const inbox = await Project.create({
-    //   name: "Inbox",
-    //   description: "Your inbox",
-    //   createdBy: user._id,
-    // });
+    if (!user) {
+      return NextResponse.json(
+        { success: false, data: null, message: "Failed to create new user" },
+        { status: 500 }
+      );
+    }
+    const inbox = await Project.create({
+      name: "Inbox",
+      description: "Your inbox",
+      createdBy: user._id,
+    });
 
-    // const updateduser = await User.findByIdAndUpdate(
-    //   user._id,
-    //   {
-    //     inbox: inbox._id,
-    //   },
-    //   {
-    //     new: true,
-    //   }
-    // );
+    const updateduser = await User.findByIdAndUpdate(
+      user._id,
+      {
+        inbox: inbox._id,
+      },
+      {
+        new: true,
+      }
+    );
 
     return NextResponse.json(
       {
         success: true,
-        data: email,
+        data: updateduser._id,
         message: "User created successfully",
       },
       { status: 201 }
