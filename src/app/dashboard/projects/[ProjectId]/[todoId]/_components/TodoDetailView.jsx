@@ -2,14 +2,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { formatDate } from "date-fns";
-
 import { CheckIcon, Pen, Trash2 } from "lucide-react";
 import PastDueAlert from "./PastDueAlert";
-import AlertBox from "../../../../../_components/AlertBox"
+import AlertBox from "@/app/_components/AlertBox";
 import StatusBadge from "./StatusBadge";
 import PriorityTag from "./PriorityTag";
 import DueDate from "./DueDate";
+import TodoInformationSection from "./TodoInformationSection";
 import TagsList from "./TagsList";
+import TodoEditForm from "./TodoEditForm";
 
 
 const TodoDetailView = ({ todo, onUpdate, onDelete }) => {
@@ -30,6 +31,10 @@ const TodoDetailView = ({ todo, onUpdate, onDelete }) => {
     }
   }, [todo.dueDate, todo.status]);
 
+  const handleSaveEdit = (formData) => {
+    onUpdate(formData);
+    setIsEditing(false);
+  };
 
   const handleToggleComplete = () => {
     const newStatus = todo.status === "completed" ? "to-do" : "completed";
@@ -43,6 +48,7 @@ const TodoDetailView = ({ todo, onUpdate, onDelete }) => {
     if (!date) return null;
     return formatDate(new Date(date), "MMM d, yyyy");
   };
+  
 
   return (
     <div className="bg-gray-800 text-gray-100 rounded-lg shadow-md p-6">
@@ -108,14 +114,19 @@ const TodoDetailView = ({ todo, onUpdate, onDelete }) => {
             )}
           </div>
 
+          <TodoInformationSection todo={todo} />
 
           {todo.tags && todo.tags.length > 0 && (
             <TagsList tags={todo.tags} />
           )}
         </>
       ) : (
-         <>
-         </>
+        <TodoEditForm
+          todo={todo} 
+          minDate={minDate} 
+          onCancel={() => setIsEditing(false)} 
+          onSubmit={handleSaveEdit} 
+        />
       )}
     </div>
   );
