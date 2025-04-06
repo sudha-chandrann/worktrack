@@ -1,4 +1,3 @@
-// src/pages/api/users/register.js
 import dbConnect from "../../../../lib/dbconnect"
 import { User } from "../../../../models/user.model";
 import { getDataFromToken } from "../../../../utils/getdatafromtoken";
