@@ -47,7 +47,7 @@ export default function RootLayout({ children }) {
         <div className="hidden md:flex w-56 lg:w-64 h-full flex-col fixed insert-y-0 z-50 ">
           <Sidebar/>
         </div>
-        <div className="md:ml-56 lg:ml-64 mt-[60px] w-full bg-gray-900">{children}</div>
+        <div className="md:ml-56 lg:ml-64  w-full bg-gray-900">{children}</div>
       </div>
     
   );

@@ -75,9 +75,9 @@ export async function GET(req, context) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error in GET /api/users/getalltodos:", error);
+    console.error("Error in geting project data", error);
     return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
+      { success: false, message:error.message||"Internal Server Error" },
       { status: 500 }
     );
   }
@@ -214,7 +214,7 @@ export async function DELETE(req, context) {
   } catch (error) {
     console.error("Error in DELETE /api/teams/[teamId]/projects/[projectId]:", error);
     return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
+      { success: false, message:error.message||"Internal Server Error" },
       { status: 500 }
     );
   }

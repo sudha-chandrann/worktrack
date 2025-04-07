@@ -128,7 +128,7 @@ function Page() {
 
     const groupedTodos = data ? groupTodosByDate(data) : {};
   return (
-    <div className="bg-gray-900 text-white min-h-screen p-4">
+    <div className="bg-gray-900 text-white min-h-screen p-4 pt-[78px]">
         <div className="max-w-5xl mx-auto">
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-white">Inbox</h1>

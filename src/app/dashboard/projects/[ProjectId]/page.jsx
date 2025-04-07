@@ -175,12 +175,12 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen">
-      <div className="max-w-5xl mx-auto p-6">
+    <div className="bg-gray-900 min-h-screen pt-[58px]">
+      <div className="mx-auto p-6">
         <div className="mb-6 flex items-center justify-between">
           <button
             onClick={() => router.push('/dashboard/today')}
-            className="text-gray-400 hover:text-white flex items-center gap-2 transition-colors duration-200"
+            className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
           >
             <ChevronLeft size={16} />
             Back to Dashboard
@@ -188,10 +188,10 @@ function Page({ params }) {
           {
             inboxId !== ProjectId && (
              <AlertBox onConfirm={handleProjectDelete}>
-                <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
-                  <Trash2 className="w-4 h-4" />
-                  Delete
-                </button>
+                  <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
               </AlertBox>
             )
           }

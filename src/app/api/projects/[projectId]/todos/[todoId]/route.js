@@ -169,7 +169,7 @@ export async function DELETE(req, context) {
   } catch (error) {
     console.error("Error deleting todo:", error);
     return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
+      { success: false, message:error.message|| "Internal Server Error" },
       { status: 500 }
     );
   }

@@ -154,7 +154,7 @@ function ProjectPage({ params }) {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen w-full overflow-x-hidden pb-8">
+    <div className="bg-gray-900 min-h-screen w-full pt-[56px] overflow-x-hidden pb-8">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
         {/* Project Header Card */}
         <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg border border-gray-700 mb-6 mt-6">
@@ -183,13 +183,10 @@ function ProjectPage({ params }) {
             </div>
             {isAdmin && (
               <AlertBox onConfirm={handleDeleteProject}>
-                <button
-                disabled={isDeletingProject}
-                className="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-full hover:bg-gray-700"
-                title="Delete Project"
-              >
-                <Trash2 size={20} />
-              </button>
+                  <button className="px-4 py-2 bg-red-900/70 hover:bg-red-800 text-red-100 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2 border border-red-800/50">
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
               </AlertBox>
 
             )}

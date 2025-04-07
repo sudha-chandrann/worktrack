@@ -113,8 +113,8 @@ export async function GET(req,context) {
 
       return NextResponse.json({ success: true, data:todos, message: " todos found" }, { status: 200 });
     } catch (error) {
-      console.error("Error in GET /api/users/getalltodos:", error);
-      return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+      console.error("Error in geting todo data", error);
+      return NextResponse.json({ success: false, message:error.message|| "Internal Server Error" }, { status: 500 });
     }
 }
 
@@ -226,7 +226,7 @@ export async function DELETE(req, context) {
   } catch (error) {
     console.error("Error in DELETE /api/projects/[projectId]:", error);
     return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
+      { success: false, message:error.message||"Internal Server Error" },
       { status: 500 }
     );
   }

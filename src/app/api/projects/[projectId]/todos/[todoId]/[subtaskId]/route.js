@@ -84,6 +84,7 @@ export async function PATCH(req, context) {
     );
   }
 }
+
 export async function DELETE(req, context) {
   await dbConnect();
 
@@ -157,7 +158,7 @@ export async function DELETE(req, context) {
   } catch (error) {
     console.error("Error deleting subtask:", error);
     return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
+      { success: false, message:error.message||"Internal Server Error" },
       { status: 500 }
     );
   }

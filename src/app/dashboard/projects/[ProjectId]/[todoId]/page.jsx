@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import TodoDetailView from "./_components/TodoDetailView";
 import AddSubtaskForm from "./_components/AddSubtaskForm";
 import SubtaskList from "./_components/SubtaskList";
+import { ChevronLeft } from "lucide-react";
 
 function Page({ params }) {
   const { ProjectId, todoId } = params;
@@ -144,14 +145,15 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-900 ">
-    <div className="max-w-5xl mx-auto p-6 bg-gray-900 min-h-screen">
+    <div className="bg-gray-900 min-h-screen pt-[58px]">
+    <div className=" mx-auto p-6 bg-gray-900 ">
       <div className="mb-4">
         <button
           onClick={() => router.push(`/dashboard/projects/${ProjectId}`)}
           className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
         >
-          <span>←</span> Back to Project
+          <ChevronLeft size={16} />
+           Back to Project
         </button>
       </div>
       <TodoDetailView

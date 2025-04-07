@@ -90,7 +90,7 @@ import { NextResponse } from "next/server";
       return NextResponse.json(
         { 
           success: false, 
-          message: "Failed to retrieve available users",
+          message: error.message||"Failed to retrieve available users",
           data: null 
         }, 
         { status: 500 }

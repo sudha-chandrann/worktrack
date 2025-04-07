@@ -236,7 +236,7 @@ function TodayTasksPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-900">
+      <div className="flex justify-center items-center h-screen bg-gray-900 pt-[78px]">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
           <p className="mt-4 text-gray-300">Loading your tasks...</p>
@@ -248,7 +248,7 @@ function TodayTasksPage() {
   // Error state
   if (error) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-8 bg-gray-900">
+      <div className="flex min-h-screen flex-col items-center justify-center p-8 bg-gray-900 pt-[78px]">
         <div className="bg-red-500/10 p-6 rounded-lg border border-red-500/20 max-w-md w-full">
           <h3 className="text-xl font-semibold text-red-400 mb-2">Error</h3>
           <p className="text-gray-300">{error}</p>
@@ -266,7 +266,7 @@ function TodayTasksPage() {
   // Empty state
   if (!todosData.length && !subtasksData.length) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-8 bg-gray-900">
+      <div className="flex h-full flex-col items-center justify-center p-8  bg-gray-900">
         <div className="bg-gray-800/50 p-8 rounded-xl border border-gray-700 max-w-md w-full text-center">
           <Calendar className="h-16 w-16 text-gray-400 mx-auto" />
           <h3 className="mt-4 text-xl font-semibold text-white">
@@ -297,7 +297,7 @@ function TodayTasksPage() {
 
   if (!todosData.length && subtasksData.length) {
     return (
-      <div className="flex min-h-screen flex-col pb-20 bg-gray-900 relative w-full">
+      <div className="flex min-h-screen pt-[60px] flex-col pb-20 bg-gray-900 relative w-full">
         <div className=" flex flex-wrap p-4 justify-between items-center w-full">
           <h3 className="mt-4 text-xl font-semibold text-white">
             No tasks for today
@@ -433,7 +433,7 @@ function TodayTasksPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col pb-20 bg-gray-900 relative">
+    <div className="flex min-h-screen flex-col pt-[60px] pb-8 bg-gray-900 relative">
       {/* Main Header */}
       <div className="border-b border-gray-800 bg-gray-800/90 p-2 flex items-center justify-center w-full">
         <DailyCountdownTimer />

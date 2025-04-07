@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import SubTaskDetailView from "./_components/SubTaskDetailView";
 import CommentView from "./_components/CommentView";
+import { ChevronLeft } from "lucide-react";
 
 function Page({ params }) {
   const { projectid, todoId, subtodoId, teamId } = params;
@@ -13,12 +14,12 @@ function Page({ params }) {
   const [isLoading, setisloading] = useState(false);
   const [error, seterror] = useState(null);
   const router = useRouter();
-  const userId = useSelector((state)=>state.user._id);
+  const userId = useSelector((state) => state.user._id);
   const fetchTodoData = async () => {
     try {
       setisloading(true);
       const response = await axios.get(
-        `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}/${subtodoId}`,
+        `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}/${subtodoId}`
       );
       setsubtaskdata(response.data.data);
     } catch (error) {
@@ -32,7 +33,7 @@ function Page({ params }) {
     if (todoId && projectid && subtodoId) {
       fetchTodoData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todoId, projectid, subtodoId]);
 
   const handleSubtaskUpdate = async (updatedData) => {
@@ -51,7 +52,7 @@ function Page({ params }) {
   const handleSubtaskDelete = async () => {
     try {
       const response = await axios.delete(
-        `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}/${subtodoId}`,
+        `/api/teams/${teamId}/projects/${projectid}/todos/${todoId}/${subtodoId}`
       );
       toast.success(response.data.message || "Todo is deleted Successfully");
       router.back();
@@ -107,14 +108,15 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-900">
-            <div className="mx-auto p-6 bg-gray-900 min-h-screen">
+    <div className="bg-gray-900 pt-[56px] min-h-screen">
+      <div className="mx-auto p-6 bg-gray-900">
         <div className="mb-4">
           <button
             onClick={() => router.back()}
             className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
           >
-            <span>←</span> Back to Todo
+            <ChevronLeft size={16} />
+            Back to Todo
           </button>
         </div>
         <SubTaskDetailView
@@ -123,12 +125,14 @@ function Page({ params }) {
           onDelete={handleSubtaskDelete}
           userId={userId}
         />
-                  <CommentView comments={subtaskdata.comments || []} userId={userId} subtodoId={subtodoId} teamId={teamId}/>
-
+        <CommentView
+          comments={subtaskdata.comments || []}
+          userId={userId}
+          subtodoId={subtodoId}
+          teamId={teamId}
+        />
       </div>
     </div>
-
-
   );
 }
 

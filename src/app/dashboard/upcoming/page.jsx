@@ -177,7 +177,7 @@ function UpcomingTasksPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col pb-20 bg-gray-900 relative">
+    <div className="flex min-h-screen flex-col pb-20 pt-[78px] bg-gray-900 relative">
       {/* Task List */}
       <div className="space-y-3 px-4 w-full max-w-5xl mx-auto py-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-4">

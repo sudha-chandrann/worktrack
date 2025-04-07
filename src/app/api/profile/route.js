@@ -41,7 +41,7 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: user, message: "User found" }, { status: 200 });
   } catch (error) {
     console.error("Error in geting user profile", error);
-    return NextResponse.json({ success: false, message: "Failed to get userProfile" }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message||"Failed to get userProfile" }, { status: 500 });
   }
 }
 
@@ -102,6 +102,6 @@ export async function PATCH(req) {
       return NextResponse.json({ success: true, data: updatedUser, message: "Profile updated successfully" }, { status: 200 });
     } catch (error) {
       console.error("Error  in updating profile", error);
-      return NextResponse.json({ success: false, message: "Failed to update Profile"}, { status: 500 });
+      return NextResponse.json({ success: false, message: error.message||"Failed to update Profile"}, { status: 500 });
     }
 }

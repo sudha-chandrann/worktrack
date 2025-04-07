@@ -51,7 +51,7 @@ const NotificationsPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 ">
+    <div className="max-w-4xl mx-auto px-4 py-8 pt-[78px]">
       <div className="flex items-center mb-6">
         <BellIcon className="h-6 w-6 text-blue-600 mr-2" />
         <h1 className="text-2xl font-bold text-gray-200">Notifications</h1>

@@ -1,4 +1,3 @@
-// src/pages/api/users/register.js
 import dbConnect from "../../../../lib/dbconnect"
 import { User,Todo } from "../../../../models/user.model";
 import { getDataFromToken } from "../../../../utils/getdatafromtoken";
@@ -44,6 +43,6 @@ export async function GET(req) {
     return NextResponse.json({ success: true, data: todos, message: "User found" }, { status: 200 });
   } catch (error) {
     console.error("Error in GET /api/users/getuserinbox:", error);
-    return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message||"Internal Server Error" }, { status: 500 });
   }
 }

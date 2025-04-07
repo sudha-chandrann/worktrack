@@ -1,4 +1,3 @@
-// src/pages/api/users/register.js
 import dbConnect from "../../../lib/dbconnect"
 import { Notification } from "../../../models/user.model";
 import { getDataFromToken } from "../../../utils/getdatafromtoken";
@@ -34,7 +33,7 @@ export async function GET(req) {
     { status: 200 }
   );
   } catch (error) {
-    console.error("Error in GET /api/users/register:", error);
-    return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+    console.error("Error in GET notification", error);
+    return NextResponse.json({ success: false, message: error.message||"Internal Server Error" }, { status: 500 });
   }
 }

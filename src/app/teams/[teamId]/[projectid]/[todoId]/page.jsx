@@ -8,6 +8,7 @@ import TodoDetailView from "./_components/TodoDetailView";
 import AddSubtaskForm from "./_components/AddSubtaskForm";
 import SubtaskList from "./_components/SubtaskList";
 import CommentView from "./_components/CommentView";
+import { ChevronLeft } from "lucide-react";
 
 function Page({ params }) {
   const { projectid, todoId, teamId } = params;
@@ -138,14 +139,15 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-700 ">
-      <div className=" mx-auto p-6 bg-gray-900 min-h-screen">
+    <div className="bg-gray-800 min-h-screen pt-[56px]">
+      <div className=" mx-auto p-6 bg-gray-900 ">
         <div className="mb-4">
           <button
             onClick={() => router.back()}
             className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
           >
-            <span>←</span> Back to Project
+            <ChevronLeft size={16} />
+            Back to Project
           </button>
         </div>
         <TodoDetailView
@@ -190,8 +192,12 @@ function Page({ params }) {
             setisanyChange={setisanyChange}
           />
         </div>
-        <CommentView comments={tododata.comments || []} userId={userId} todoId={todoId} teamId={teamId}/>
-
+        <CommentView
+          comments={tododata.comments || []}
+          userId={userId}
+          todoId={todoId}
+          teamId={teamId}
+        />
       </div>
     </div>
   );

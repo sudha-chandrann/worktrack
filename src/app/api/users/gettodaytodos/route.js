@@ -1,4 +1,3 @@
-// src/pages/api/users/register.js
 import dbConnect from "../../../../lib/dbconnect"
 import { Subtask, Todo } from "../../../../models/user.model";
 import { getDataFromToken } from "../../../../utils/getdatafromtoken";
@@ -49,6 +48,6 @@ export async function GET(req) {
       }, message: "Today's todos found" }, { status: 200 });
     } catch (error) {
       console.error("Error in GET /api/users/gettodaytodos:", error);
-      return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+      return NextResponse.json({ success: false, message: error.message||"Internal Server Error" }, { status: 500 });
     }
   }

@@ -117,8 +117,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen pt-[60px]  bg-gradient-to-br from-gray-900 to-gray-800">
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
     <div className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-32 md:h-48"></div>
       <div className="px-6 py-8 -mt-16 relative">
@@ -182,7 +182,7 @@ const ProfilePage = () => {
         isSubmitting={isSubmitting}
       />
     )}
-  </div>
+        </div>
   </div>
   
   );

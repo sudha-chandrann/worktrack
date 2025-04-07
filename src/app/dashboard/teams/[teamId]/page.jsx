@@ -1,13 +1,15 @@
 "use client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { AlertCircle, Plus, UserPlus, Users } from "lucide-react";
+import { AlertCircle, Plus, Trash2, UserPlus, Users } from "lucide-react";
 import toast from "react-hot-toast";
 import { Button } from "../../../../components/ui/button";
 import MemberCard from "../_components/MemberCard";
 import AddMemberModal from "../_components/AddMemberModal";
 import AddProjectModal from "../_components/AddProjectModal";
 import ProjectCard from "../_components/ProjectCard";
+import AlertBox from "../../../_components/AlertBox";
+import { useRouter } from "next/navigation";
 
 function Page({ params }) {
   const { teamId } = params;
@@ -19,6 +21,9 @@ function Page({ params }) {
   const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
   const [addProjectModalOpen, setAddProjectModalOpen] = useState(false);
   const [isEditing, setisEditing] = useState(false);
+  const router= useRouter();
+
+
   const fetchTeamData = async () => {
     try {
       setIsLoading(true);
@@ -50,6 +55,24 @@ function Page({ params }) {
       console.log(" the error during creating project is ",err)
     } finally {
       setisSubmitting(false);
+    }
+  };
+
+  const handleDeleteTeam = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.delete(
+        `/api/teams/${teamId}`);
+      toast.success(
+        response.data.message || "Team is deleted Successfully"
+      );
+      router.push(`/dashboard/inbox`)
+      
+    } catch (err) {
+      toast.error(err.message || "Something went wrong!");
+      console.log(" the error during deleting team is ",err)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,7 +124,7 @@ function Page({ params }) {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen min-w-fit">
+    <div className="bg-gray-900 min-h-screen min-w-fit pt-[56px]">
       <div className="max-w-6xl  mx-auto p-6">
         <div className="flex justify-between items-center mb-6 flex-wrap gap-2 py-2">
           <div className=" flex flex-col gap-2">
@@ -112,11 +135,11 @@ function Page({ params }) {
             <p className="text-gray-500">{team.description}</p>
           </div>
           {isAdmin && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button
                 variant="outline"
                 onClick={() => setAddMemberModalOpen(true)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 bg-white hover:bg-white/70"
               >
                 <UserPlus size={16} />
                 Add Member
@@ -128,6 +151,15 @@ function Page({ params }) {
                 <Plus size={16} />
                 New Project
               </Button>
+              <AlertBox onConfirm={handleDeleteTeam}>
+              <Button
+                className="flex items-center gap-2 bg-red-600 hover:bg-red-800"
+              >
+                <Trash2 size={16} />
+                 Delete
+              </Button>
+
+              </AlertBox>
             </div>
           )}
         </div>

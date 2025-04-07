@@ -27,7 +27,7 @@ function Page() {
         }
     }
   return (
-    <div className='h-full min-h-fit bg-gray-900'>
+    <div className='h-full min-h-fit bg-gray-900 pt-[60px]'>
       <NewProjectModal onSubmit={handleProjectSummit} isSubmitting={isSubmitting}/>
     </div>
   )

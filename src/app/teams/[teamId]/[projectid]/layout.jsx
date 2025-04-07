@@ -82,7 +82,7 @@ export default function RootLayout({ children, params }) {
       </div>
       
       {/* Main content area */}
-      <div className="md:ml-56 lg:ml-64 mt-[60px] flex-1 overflow-auto">
+      <div className="md:ml-56 lg:ml-64  flex-1 overflow-auto">
         {children}
       </div>
     </div>

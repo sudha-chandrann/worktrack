@@ -1,4 +1,3 @@
-// src/pages/api/users/register.js
 import dbConnect from "../../../../lib/dbconnect"
 import { User } from "../../../../models/user.model";
 import { NextResponse } from "next/server";
@@ -96,7 +95,7 @@ export async function POST(req) {
     console.error("Login error:", error);
     return NextResponse.json({
       success: false,
-      message: "Internal server error",
+      message:error.message || "Internal server error",
       data: error
     }, { status: 500 });
   }

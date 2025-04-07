@@ -41,7 +41,7 @@ export async function GET(req) {
 
     return NextResponse.json({ success: true, data: user, message: "User found" }, { status: 200 });
   } catch (error) {
-    console.error("Error in GET /api/users/register:", error);
-    return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+    console.error("Error in GET /api/users/getcurrentuser:", error);
+    return NextResponse.json({ success: false, message:error.message||"Internal Server Error" }, { status: 500 });
   }
 }
