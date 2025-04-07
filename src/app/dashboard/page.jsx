@@ -17,24 +17,42 @@ const ProfilePage = () => {
     fullName: '',
     username: '',
   });
+   
+  const fetchUserProfile = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get('/api/profile');
+      setUserData(response.data.data);
+      setFormData({
+        fullName: response.data.data.fullName,
+        username: response.data.data.username,
+      });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      toast.error('Failed to load profile information');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Fetch user profile data
+
+     // Fetch user profile data
   useEffect(() => {
     const fetchUserProfile = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get('/api/profile');
-        setUserData(response.data.data);
-        setFormData({
-          fullName: response.data.data.fullName,
-          username: response.data.data.username,
-        });
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        toast.error('Failed to load profile information');
-      } finally {
-        setIsLoading(false);
-      }
+        try {
+          setIsLoading(true);
+          const response = await axios.get('/api/profile');
+          setUserData(response.data.data);
+          setFormData({
+            fullName: response.data.data.fullName,
+            username: response.data.data.username,
+          });
+        } catch (error) {
+          console.error('Error fetching profile:', error);
+          toast.error('Failed to load profile information');
+        } finally {
+          setIsLoading(false);
+        }
     };
 
     fetchUserProfile();
@@ -47,6 +65,7 @@ const ProfilePage = () => {
       const response = await axios.patch('/api/profile', updatedData);
       setUserData(response.data.data);
       setIsEditing(false);
+      fetchUserProfile();
       toast.success('Profile updated successfully');
     } catch (error) {
       console.error('Error updating profile:', error);
