@@ -7,8 +7,8 @@ import PastDueAlert from  "../../../../../dashboard/projects/[ProjectId]/[todoId
 import AlertBox from "../../../../../_components/AlertBox"
 import StatusBadge from "../../../../../dashboard/projects/[ProjectId]/[todoId]/_components/StatusBadge";
 import PriorityTag from "../../../../../dashboard/projects/[ProjectId]/[todoId]/_components/PriorityTag";
-import DueDate from "../../../../../app/dashboard/projects/[ProjectId]/[todoId]/_components/DueDate";
-import TagsList from "../../../../../app/dashboard/projects/[ProjectId]/[todoId]/_components/TagsList";
+import DueDate from "../../../../../dashboard/projects/[ProjectId]/[todoId]/_components/DueDate"
+import TagsList from "../../../../../dashboard/projects/[ProjectId]/[todoId]/_components/TagsList"
 
 
 const TodoDetailView = ({
