@@ -5,8 +5,8 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import TodoDetailView from "./_components/TodoDetailView";
-
-
+import AddSubtaskForm from "./_components/AddSubtaskForm";
+import SubtaskList from "./_components/SubtaskList";
 
 function Page({ params }) {
   const { projectid, todoId, teamId } = params;
@@ -20,7 +20,6 @@ function Page({ params }) {
   const router = useRouter();
   const userId = useSelector((state) => state.user._id);
   const [isanyChange, setisanyChange] = useState(false);
-
 
   const fetchTodoData = async () => {
     try {
@@ -81,6 +80,7 @@ function Page({ params }) {
         subtaskData
       );
       toast.success(response.data.message || "Subtask is added Successfully");
+      setIsAddingSubtask(false);
       fetchTodoData();
     } catch (err) {
       console.error("Error adding subtask:", err);
@@ -89,7 +89,6 @@ function Page({ params }) {
       setIsAddingSubtask(false);
     }
   };
-  
 
   if (isLoading) {
     return (
@@ -171,12 +170,24 @@ function Page({ params }) {
           {isAddingSubtask && (
             <div className=" w-full h-screen top-0 left-0 fixed bg-gray-400/10  z-50 flex items-center justify-center">
               <div className="mb-6 p-4 border border-gray-200 rounded-lg">
-
+                <AddSubtaskForm
+                  onSubmit={handleSubtaskAdd}
+                  onCancel={() => setIsAddingSubtask(false)}
+                  isSubmitting={isSubmitting}
+                  todoId={todoId}
+                />
               </div>
             </div>
           )}
 
-
+          <SubtaskList
+            subtasks={tododata.subtasks || []}
+            projectId={projectid}
+            todoId={todoId}
+            userId={userId}
+            teamId={teamId}
+            setisanyChange={setisanyChange}
+          />
         </div>
       </div>
     </div>
