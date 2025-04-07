@@ -9,6 +9,8 @@ import StatusBadge from "../../../../../dashboard/projects/[ProjectId]/[todoId]/
 import PriorityTag from "../../../../../dashboard/projects/[ProjectId]/[todoId]/_components/PriorityTag";
 import DueDate from "../../../../../dashboard/projects/[ProjectId]/[todoId]/_components/DueDate"
 import TagsList from "../../../../../dashboard/projects/[ProjectId]/[todoId]/_components/TagsList"
+import TodoInformationSection from "./TodoInformationSection";
+import TodoEditForm from "./TodoEditForm";
 
 
 const TodoDetailView = ({
@@ -121,11 +123,18 @@ const TodoDetailView = ({
             )}
           </div>
 
+          <TodoInformationSection todo={todo} userId={userId} />
 
           {todo.tags && todo.tags.length > 0 && <TagsList tags={todo.tags} />}
         </>
       ) : (
-      <></>
+        <TodoEditForm
+        todo={todo}
+        minDate={minDate}
+        members={teammembers}
+        onCancel={() => setIsEditing(false)}
+        onSubmit={handleSaveEdit}
+      />
       )}
     </div>
   );
