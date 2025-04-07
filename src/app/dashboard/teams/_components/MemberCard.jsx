@@ -44,7 +44,7 @@ function MemberCard({ member, isAdmin,teamId ,setisEditing}) {
      setisEditing((prev)=>!prev)
     }
     catch(error){
-      toast.error(error.message||"Failed to change role");
+      toast.error(error?.response?.data?.message||"Failed to change role");
       console.log(" the error is ",error)
     }
     finally{
@@ -62,7 +62,7 @@ function MemberCard({ member, isAdmin,teamId ,setisEditing}) {
      setisEditing((prev)=>!prev)
     }
     catch(error){
-      toast.error(error.message||"Failed to remove the member");
+      toast.error(error?.response?.data?.message||"Failed to remove the member");
       console.log(" the error is ",error)
     }
     finally{

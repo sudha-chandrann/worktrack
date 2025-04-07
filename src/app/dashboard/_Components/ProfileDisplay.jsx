@@ -4,7 +4,7 @@ import { Mail, Calendar, Folder, Users, Lock } from 'lucide-react';
 const ProfileDisplay = ({ userData, onChangePassword }) => {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="bg-gray-700 p-2 rounded-lg">
