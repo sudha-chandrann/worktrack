@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import SubTaskDetailView from "./_components/SubTaskDetailView";
+import CommentView from "./_components/CommentView";
 
 function Page({ params }) {
   const { projectid, todoId, subtodoId, teamId } = params;
@@ -122,6 +123,7 @@ function Page({ params }) {
           onDelete={handleSubtaskDelete}
           userId={userId}
         />
+                  <CommentView comments={subtaskdata.comments || []} userId={userId} subtodoId={subtodoId} teamId={teamId}/>
 
       </div>
     </div>

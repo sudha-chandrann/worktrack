@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import TodoDetailView from "./_components/TodoDetailView";
 import AddSubtaskForm from "./_components/AddSubtaskForm";
 import SubtaskList from "./_components/SubtaskList";
+import CommentView from "./_components/CommentView";
 
 function Page({ params }) {
   const { projectid, todoId, teamId } = params;
@@ -189,6 +190,8 @@ function Page({ params }) {
             setisanyChange={setisanyChange}
           />
         </div>
+        <CommentView comments={tododata.comments || []} userId={userId} todoId={todoId} teamId={teamId}/>
+
       </div>
     </div>
   );
